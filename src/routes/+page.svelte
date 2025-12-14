@@ -22,7 +22,7 @@
 	}
 
 	.nav-link {
-		font-size: 3rem;
+		font-size: 1.75rem;
 		font-weight: 600;
 		color: #fff;
 		text-decoration: none;

@@ -14,7 +14,7 @@
 	let isRootPage = $derived(page.url.pathname === '/');
 </script>
 
-<header class:non-root={!isRootPage}>
+<header>
 	<div class="container">
 		{#if !isRootPage}
 			<div class="menu-wrapper">
@@ -50,10 +50,7 @@
 		background: transparent;
 	}
 
-	header.non-root {
-		--header-color: #111;
-		--header-shadow: none;
-	}
+	/* Fixed header styling: black text across all pages */
 
 	.container {
 		max-width: 1200px;
@@ -73,11 +70,11 @@
 	.logo {
 		font-size: 3rem;
 		font-weight: 600;
-		color: var(--header-color, #fff);
+		color: #111;
 		text-decoration: none;
 		letter-spacing: 0.5rem;
 		justify-self: center;
-		text-shadow: var(--header-shadow, 2px 2px 4px rgba(0, 0, 0, 0.5));
+		text-shadow: none;
 	}
 
 	.logo a {
@@ -113,7 +110,7 @@
 	.bar {
 		width: 24px;
 		height: 2px;
-		background-color: var(--header-color, #fff);
+		background-color: #111;
 		border-radius: 2px;
 		transition: all 0.3s ease;
 	}
