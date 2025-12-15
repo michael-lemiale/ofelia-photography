@@ -23,6 +23,34 @@
 	const carouselReady = writable(false);
 	setContext('carouselReady', carouselReady);
 
+	// Ensure --vh reflects the visual viewport height on mobile
+	function setVhVar() {
+		if (typeof window === 'undefined') return;
+		const vv = (window as any).visualViewport;
+		const height = vv && typeof vv.height === 'number' ? vv.height : window.innerHeight;
+		const vh = height * 0.01;
+		document.documentElement.style.setProperty('--vh', `${vh}px`);
+	}
+	onMount(() => {
+		setVhVar();
+		const onWinResize = () => setVhVar();
+		window.addEventListener('resize', onWinResize, { passive: true });
+		const vv = (window as any).visualViewport;
+		const onVvResize = () => setVhVar();
+		const onVvScroll = () => setVhVar();
+		if (vv) {
+			vv.addEventListener('resize', onVvResize, { passive: true });
+			vv.addEventListener('scroll', onVvScroll, { passive: true });
+		}
+		return () => {
+			window.removeEventListener('resize', onWinResize as any);
+			if (vv) {
+				vv.removeEventListener('resize', onVvResize as any);
+				vv.removeEventListener('scroll', onVvScroll as any);
+			}
+		};
+	});
+
 	function loadImage(src: string) {
 		return new Promise<void>((resolve) => {
 			const img = new Image();
@@ -127,7 +155,7 @@
 			<div class="carousel-background" transition:fade={{ duration: 250 }}>
 				<div class="carousel-track">
 					{#each duplicatedUrls as url, i}
-						<div class="carousel-image" style={`height: ${heightsVh[i]}vh;`}>
+						<div class="carousel-image" style={`height: calc(var(--vh) * ${heightsVh[i]});`}>
 							<img src={url} alt="Photography by Ofelia Eme" />
 						</div>
 					{/each}
@@ -174,7 +202,10 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100%;
+		height: 100vh; /* fallback */
+		height: 100svh; /* small viewport height */
+		height: 100dvh; /* dynamic viewport height */
+		height: calc(var(--vh) * 100); /* JS-set visual viewport height */
 		z-index: 0;
 		overflow: hidden;
 		background: #f5f5f5;
@@ -185,7 +216,10 @@
 		top: 0;
 		left: 0;
 		width: 100%;
-		height: 100%;
+		height: 100vh; /* fallback */
+		height: 100svh; /* small viewport height */
+		height: 100dvh; /* dynamic viewport height */
+		height: calc(var(--vh) * 100); /* JS-set visual viewport height */
 		z-index: 0;
 		display: flex;
 		align-items: center;
@@ -198,7 +232,10 @@
 		position: absolute;
 		bottom: 0;
 		left: 0;
-		height: 100vh;
+		height: 100vh; /* fallback */
+		height: 100svh; /* small viewport height to avoid mobile UI gaps */
+		height: 100dvh; /* dynamic viewport height */
+		height: calc(var(--vh) * 100); /* JS-set visual viewport height */
 		width: max-content;
 		animation: scroll 70s linear infinite;
 		align-items: flex-end;
@@ -228,8 +265,16 @@
 	.carousel-image :global(img) {
 		height: 100%;
 		width: auto; /* natural width from height & aspect ratio */
-		max-width: min(65vw, 1100px); /* cap extreme ballooning without forcing gaps */
+		max-width: none; /* allow width to grow to satisfy height */
 		object-fit: contain;
+		display: block;
+	}
+
+	/* Keep a reasonable cap for large screens only */
+	@media (min-width: 1024px) {
+		.carousel-image :global(img) {
+			max-width: 1100px;
+		}
 	}
 
 	.overlay {
@@ -258,5 +303,14 @@
 		to {
 			transform: rotate(360deg);
 		}
+	}
+
+	/* Use a safe viewport unit for dynamic heights (fallback to 1vh) */
+	:root { --vh: 1vh; }
+	@supports (height: 1svh) {
+		:root { --vh: 1svh; }
+	}
+	@supports (height: 1dvh) {
+		:root { --vh: 1dvh; }
 	}
 </style>

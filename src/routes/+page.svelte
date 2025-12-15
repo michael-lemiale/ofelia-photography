@@ -26,18 +26,18 @@
 	.home-nav {
 		display: flex;
 		flex-direction: column;
-		gap: 2rem;
+		gap: .5rem;
 		align-items: center;
 	}
 
 	.nav-link {
 		font-size: 1.5rem;
-		font-weight: 600;
+		font-weight: 500;
 		color: #fff;
 		text-decoration: none;
 		letter-spacing: 0.2em;
 		transition: transform 0.3s ease, opacity 0.3s ease;
-		text-shadow: 4px 4px 8px rgba(0, 0, 0, .75);
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
 	}
 
 	.nav-link:hover {
