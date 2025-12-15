@@ -1,10 +1,20 @@
-<div class="home">
+<script lang="ts">
+	import { getContext } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import type { Writable } from 'svelte/store';
+
+	const carouselReady = getContext<Writable<boolean>>('carouselReady');
+</script>
+
+{#if $carouselReady}
+<div class="home" transition:fade={{ duration: 200 }}>
 	<nav class="home-nav">
 		<a href="/portfolio" class="nav-link">PORTFOLIO</a>
 		<a href="/about" class="nav-link">ABOUT</a>
 		<a href="/contact" class="nav-link">CONTACT</a>
 	</nav>
 </div>
+{/if}
 
 <style>
 	.home {

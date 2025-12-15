@@ -3,33 +3,58 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import Header from '$lib/components/Header.svelte';
 	import { page } from '$app/state';
+	import { onMount, setContext } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { writable } from 'svelte/store';
 
 	let { children } = $props();
 
 	const imageModules: Record<string, { default: string }> = import.meta.glob(
 		'$lib/assets/img/*.{jpg,jpeg,png,webp,avif}',
-		{
-			eager: true,
-			query: {
-				enhanced: true
-			}
-		}
+		{ eager: true }
 	);
 
-	const images = Object.values(imageModules).map((module) => module.default);
+	// Always resolve to string URLs for runtime usage
+	const imageUrls: string[] = Object.values(imageModules).map((m) => m.default);
+
+	let isCarouselReady = $state(false);
+	const carouselReady = writable(false);
+	setContext('carouselReady', carouselReady);
+
+	function loadImage(src: string) {
+		return new Promise<void>((resolve) => {
+			const img = new Image();
+			img.decoding = 'async' as any;
+			img.loading = 'eager' as any;
+			img.onload = () => resolve();
+			img.onerror = () => resolve();
+			img.src = src;
+		});
+	}
+
+	async function preloadImages(urls: string[]) {
+		await Promise.all(urls.map((u) => loadImage(u)));
+	}
+
+	onMount(async () => {
+		// Preload the unique set of images (not the duplicates)
+		await preloadImages(imageUrls);
+		console.log('Carousel image URLs:', imageUrls.slice(0, 5));
+		isCarouselReady = true;
+		carouselReady.set(true);
+	});
 	
 	// Start at a random position
-	const randomStart = Math.floor(Math.random() * images.length);
-	const rotatedImages = [...images.slice(randomStart), ...images.slice(0, randomStart)];
+	const randomStart = Math.floor(Math.random() * imageUrls.length);
+	const rotatedUrls = [...imageUrls.slice(randomStart), ...imageUrls.slice(0, randomStart)];
 	
 	// Duplicate images for seamless loop (triplicate for smoother wrap)
-	const duplicatedImages = [...rotatedImages, ...rotatedImages, ...rotatedImages];
+	const duplicatedUrls = [...rotatedUrls, ...rotatedUrls, ...rotatedUrls];
 
-	// Generate varied heights (in vh) to leave whitespace at the top
-	// Range: 60vh to 90vh for pleasing variation
-	const heightsVh: number[] = duplicatedImages.map(() => {
-		const min = 60;
-		const max = 90;
+	// Vary image heights for visual interest
+	const heightsVh: number[] = duplicatedUrls.map(() => {
+		const min = 70;
+		const max = 100;
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	});
 
@@ -38,20 +63,25 @@
 
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <div class="app" class:off-white={!isRootPage}>
-	{#if isRootPage}
-		<div class="carousel-background">
-			<div class="carousel-track">
-				{#each duplicatedImages as image, i}
-					<div class="carousel-image" style={`height: ${heightsVh[i]}vh;`}>
-						<enhanced:img src={image} alt="Photography by Ofelia Eme" />
-					</div>
-				{/each}
-			</div>
-			<div class="overlay"></div>
-		</div>
-	{/if}
-
 	<Header />
+	{#if isRootPage}
+		{#if isCarouselReady}
+			<div class="carousel-background" transition:fade={{ duration: 250 }}>
+				<div class="carousel-track">
+					{#each duplicatedUrls as url, i}
+						<div class="carousel-image" style={`height: ${heightsVh[i]}vh;`}>
+							<img src={url} alt="Photography by Ofelia Eme" />
+						</div>
+					{/each}
+				</div>
+				<div class="overlay"></div>
+			</div>
+		{:else}
+			<div class="loading-background" transition:fade={{ duration: 2000 }} aria-busy="true" role="status" aria-label="Loading photos">
+				<div class="spinner"></div>
+			</div>
+		{/if}
+	{/if}
 	<main>
 		{@render children()}
 	</main>
@@ -89,6 +119,19 @@
 		height: 100%;
 		z-index: 0;
 		overflow: hidden;
+		background: #f5f5f5;
+	}
+
+	.loading-background {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		background: #f5f5f5;
 	}
 
@@ -133,7 +176,25 @@
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background: rgba(0, 0, 0, 0.1);
+		background: rgba(0, 0, 0, 0.05);
 		z-index: 1;
+	}
+
+	.spinner {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		border: 4px solid rgba(0, 0, 0, 0.15);
+		border-top-color: rgba(0, 0, 0, 0.5);
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

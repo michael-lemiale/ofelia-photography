@@ -1,51 +1,61 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	const imageModules: Record<string, { default: any }> = import.meta.glob(
 		'$lib/assets/img/*.{jpg,jpeg,png,webp,avif}',
 		{
 			eager: true,
-			query: {
-				enhanced: true
-			}
 		}
 	);
 
-	let imageElements: { path: string; module: any; isPortrait: boolean }[] = [];
+	let imageElements = $state<{ path: string; module: any; isPortrait: boolean }[]>([]);
+	let isReady = $state(false);
+
+	function resolveSrc(mod: any): string {
+		const m = mod?.default ?? mod;
+		return m?.img?.src || m?.src || (typeof m === 'string' ? m : '');
+	}
 
 	onMount(() => {
-		// Determine aspect ratios for each image
-		const images = Object.entries(imageModules);
-		const loadPromises = images.map(([path, module]) => {
-			return new Promise<{ path: string; module: any; isPortrait: boolean }>((resolve) => {
+		const entries = Object.entries(imageModules);
+		const loads = entries.map(([path, mod]) =>
+			new Promise<{ path: string; module: any; isPortrait: boolean }>((resolve) => {
 				const img = new Image();
-				img.onload = () => {
+				img.onload = () =>
 					resolve({
 						path,
-						module: module.default,
+						module: mod.default,
 						isPortrait: img.height > img.width
 					});
-				};
-				// Enhanced images have sources object with different sizes
-				const imgSrc = module.default?.sources?.[0]?.srcset?.split(' ')[0] || module.default?.img?.src || module.default;
-				img.src = imgSrc;
-			});
-		});
+				img.onerror = () =>
+					resolve({ path, module: mod.default, isPortrait: false });
+				img.src = resolveSrc(mod);
+			})
+		);
 
-		Promise.all(loadPromises).then((results) => {
+		Promise.all(loads).then((results) => {
 			imageElements = results;
+			isReady = true;
 		});
 	});
 </script>
 
+
 <div class="gallery">
-	<div class="gallery-grid">
+	{#if isReady}
+	<div class="gallery-grid" transition:fade={{ duration: 1200 }}>
 		{#each imageElements as { path, module, isPortrait }}
 			<div class="gallery-item" class:portrait={isPortrait} class:landscape={!isPortrait}>
 				<enhanced:img src={module} alt="Photography by Ofelia" />
 			</div>
 		{/each}
 	</div>
+	{:else}
+	<div class="loading-background" role="status" aria-busy="true" aria-label="Loading portfolio images" transition:fade={{ duration: 1000 }}>
+		<div class="spinner"></div>
+	</div>
+	{/if}
 </div>
 
 <style>
@@ -103,5 +113,27 @@
 		.gallery-item.landscape {
 			grid-column: span 1;
 		}
+	}
+
+	/* Loading state */
+	.loading-background {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 4rem 0;
+	}
+
+	.spinner {
+		width: 48px;
+		height: 48px;
+		border-radius: 50%;
+		border: 4px solid rgba(0, 0, 0, 0.15);
+		border-top-color: rgba(0, 0, 0, 0.5);
+		animation: spin 1s linear infinite;
+	}
+
+	@keyframes spin {
+		from { transform: rotate(0deg); }
+		to { transform: rotate(360deg); }
 	}
 </style>
