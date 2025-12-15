@@ -8,12 +8,11 @@ export const actions = {
 		const data = await request.formData();
 		const name = data.get('name');
 		const email = data.get('email');
-		const phone = data.get('phone');
-		const subject = data.get('subject');
+		const subject = 'NEW INQUIRY';
 		const message = data.get('message');
 
 		// Validate required fields
-		if (!name || !email || !subject || !message) {
+		if (!name || !email || !message) {
 			return fail(400, { error: 'Please fill in all required fields.' });
 		}
 
@@ -41,14 +40,13 @@ export const actions = {
 				to: 'info@ofeliaemephoto.com',
 				subject: `Contact Form: ${subject}`,
 				replyTo: email.toString(),
-				text: `Name: ${name}\nEmail: ${email}\nPhone: ${phone || 'Not provided'}\n\nMessage:\n${message}`,
+				text: `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`,
 				html: `
 					<h3>New Contact Form Submission</h3>
 					<p><strong>Name:</strong> ${name}</p>
 					<p><strong>Email:</strong> ${email}</p>
-					<p><strong>Phone:</strong> ${phone || 'Not provided'}</p>
 					<p><strong>Subject:</strong> ${subject}</p>
-					<p><strong>Message:</strong></p>
+					<p><strong>Message:</strong></p>	
 					<p>${message.toString().replace(/\n/g, '<br>')}</p>
 				`
 			};

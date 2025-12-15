@@ -11,7 +11,6 @@
 	<nav class="home-nav">
 		<a href="/portfolio" class="nav-link">PORTFOLIO</a>
 		<a href="/about" class="nav-link">ABOUT</a>
-		<a href="/contact" class="nav-link">CONTACT</a>
 	</nav>
 </div>
 {/if}
@@ -32,13 +31,13 @@
 	}
 
 	.nav-link {
-		font-size: 1.75rem;
+		font-size: 1.5rem;
 		font-weight: 600;
 		color: #fff;
 		text-decoration: none;
 		letter-spacing: 0.2em;
 		transition: transform 0.3s ease, opacity 0.3s ease;
-		text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+		text-shadow: 4px 4px 8px rgba(0, 0, 0, .75);
 	}
 
 	.nav-link:hover {
@@ -52,7 +51,7 @@
 		}
 
 		.nav-link {
-			font-size: 2rem;
+			font-size: 1rem;
 		}
 	}
 </style>

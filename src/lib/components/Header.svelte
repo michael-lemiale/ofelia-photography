@@ -12,11 +12,19 @@
 	}
 
 	let isRootPage = $derived(page.url.pathname === '/');
+
+	function isActive(path: string) {
+		return page.url.pathname === path;
+	}
 </script>
 
 <header>
-	<div class="container">
-		{#if !isRootPage}
+	{#if isRootPage}
+		<div class="container root-only">
+			<h1 class="logo"><a href="/">OFELIA EME</a></h1>
+		</div>
+	{:else}
+		<div class="container">
 			<div class="menu-wrapper">
 				<button class="menu-toggle" onclick={toggleMenu} aria-label="Toggle menu">
 					<span class="bar"></span>
@@ -26,20 +34,23 @@
 
 				{#if isMenuOpen}
 					<div class="menu-dropdown">
-						<a href="/" onclick={closeMenu}>Home</a>
-						<a href="/portfolio" onclick={closeMenu}>Portfolio</a>
-						<a href="/about" onclick={closeMenu}>About</a>
-						<a href="/contact" onclick={closeMenu}>Contact</a>
+						<a href="/" class:active={isActive('/')} onclick={closeMenu}>Home</a>
+						<a href="/portfolio" class:active={isActive('/portfolio')} onclick={closeMenu}>Portfolio</a>
+						<a href="/about" class:active={isActive('/about')} onclick={closeMenu}>About</a>
+						<a href="/contact" class:active={isActive('/contact')} onclick={closeMenu}>Contact</a>
 					</div>
 				{/if}
 			</div>
-		{:else}
-			<div></div>
-		{/if}
 
-		<h1 class="logo"><a href="/">OFELIA EME</a></h1>
-		<div></div>
-	</div>
+			<h1 class="logo"><a href="/">OFELIA EME</a></h1>
+
+			<nav class="desktop-nav">
+				<a href="/portfolio" class:active={isActive('/portfolio')}>PORTFOLIO</a>
+				<a href="/about" class:active={isActive('/about')}>ABOUT</a>
+				<a href="/contact" class:active={isActive('/contact')}>CONTACT</a>
+			</nav>
+		</div>
+	{/if}
 </header>
 
 <style>
@@ -57,9 +68,20 @@
 		margin: 0 auto;
 		padding: 0 2rem;
 		display: grid;
-		grid-template-columns: 1fr auto 1fr;
+		grid-template-columns: auto 1fr auto;
 		align-items: center;
 		gap: 1rem;
+	}
+
+	/* Root page: center the logo and hide other controls */
+	.container.root-only {
+		grid-template-columns: 1fr;
+		justify-items: center;
+	}
+
+	.container.root-only .logo {
+		justify-self: center;
+		text-align: center;
 	}
 
 	.menu-wrapper {
@@ -68,13 +90,13 @@
 	}
 
 	.logo {
-		font-size: 3rem;
+		font-size: 2rem;
 		font-weight: 600;
 		color: #111;
 		text-decoration: none;
 		letter-spacing: 0.5rem;
-		justify-self: center;
-		text-shadow: none;
+		justify-self: start;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, .25);
 	}
 
 	.logo a {
@@ -84,7 +106,7 @@
 	}
 
 	.logo a:hover {
-		opacity: 0.7;
+		opacity: 0.5;
 	}
 
 	.menu-wrapper {
@@ -143,13 +165,77 @@
 		background-color: #f5f5f5;
 	}
 
+	.menu-dropdown a.active {
+		text-decoration: underline;
+		text-underline-offset: 4px;
+	}
+
+	.desktop-nav {
+		display: flex;
+		gap: 2rem;
+		justify-self: end;
+	}
+
+	.desktop-nav a {
+		font-size: 1rem;
+		font-weight: 600;
+		letter-spacing: 0.2em;
+		color: #111;
+		text-decoration: none;
+		transition: opacity 0.2s ease;
+	}
+
+	.desktop-nav a:hover {
+		opacity: 0.7;
+	}
+
+	.desktop-nav a.active {
+		text-decoration: underline;
+		text-underline-offset: 6px;
+		text-decoration-thickness: 2px;
+	}
+
 	@media (max-width: 640px) {
 		.container {
+			position: relative;
 			padding: 0 1rem;
+			grid-template-columns: 1fr;
+			justify-items: center;
+		}
+
+		/* Mobile: show hamburger fixed left, center logo, hide desktop nav */
+		.menu-wrapper {
+			display: block;
+			position: absolute;
+			left: 1rem;
+			top: 50%;
+			transform: translateY(-50%);
 		}
 
 		.logo {
 			font-size: 1.25rem;
+			justify-self: center;
+			text-align: center;
+		}
+
+		.desktop-nav {
+			display: none;
+		}
+	}
+
+	/* Desktop: hide hamburger, show nav right, logo left */
+	@media (min-width: 641px) {
+		.menu-wrapper {
+			display: none;
+		}
+
+		.logo {
+			justify-self: start;
+		}
+
+		.desktop-nav {
+			display: flex;
+			justify-self: end;
 		}
 	}
 </style>

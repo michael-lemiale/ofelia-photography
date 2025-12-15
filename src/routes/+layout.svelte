@@ -51,16 +51,48 @@
 	// Duplicate images for seamless loop (triplicate for smoother wrap)
 	const duplicatedUrls = [...rotatedUrls, ...rotatedUrls, ...rotatedUrls];
 
-	// Vary image heights for visual interest
-	const heightsVh: number[] = duplicatedUrls.map(() => {
-		const min = 70;
-		const max = 100;
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	});
+	// Vary image heights for visual interest, but keep them identical across triplicates
+	const heightOptions = [50, 75, 100];
+	const baseHeightsVh: number[] = [];
+	{
+		let last: number | null = null;
+		let streak = 0; // count of consecutive same values
+		for (let i = 0; i < rotatedUrls.length; i++) {
+			let choice = heightOptions[Math.floor(Math.random() * heightOptions.length)];
+			// Prevent forming a triple streak
+			if (last !== null && streak >= 2 && choice === last) {
+				const alternatives = heightOptions.filter((h) => h !== last);
+				choice = alternatives[Math.floor(Math.random() * alternatives.length)];
+			}
+			baseHeightsVh.push(choice);
+			if (last === choice) streak += 1;
+			else {
+				last = choice;
+				streak = 1;
+			}
+		}
+
+		// Also prevent a wrap-around triple across the seam of repeated tracks
+		if (
+			baseHeightsVh.length >= 2 &&
+			baseHeightsVh[baseHeightsVh.length - 1] === baseHeightsVh[0] &&
+			baseHeightsVh[0] === baseHeightsVh[1]
+		) {
+			const forbidden = new Set([baseHeightsVh[0]]);
+			const alt = heightOptions.find((h) => !forbidden.has(h));
+			if (alt !== undefined) baseHeightsVh[0] = alt;
+		}
+	}
+	const heightsVh: number[] = [
+		...baseHeightsVh,
+		...baseHeightsVh,
+		...baseHeightsVh
+	];
 
 	let isRootPage = $derived(page.url.pathname === '/');
 </script>
 
+<title>ofelia eme | film & digital photography | paris</title>
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <div class="app" class:off-white={!isRootPage}>
 	<Header />
@@ -162,11 +194,15 @@
 		height: auto;
 		max-height: 100%;
 		width: auto;
+		display: flex;
+		align-items: flex-end; /* ensure image bottom aligns with viewport bottom */
+		justify-content: flex-start; /* avoid internal horizontal gaps */
 	}
 
 	.carousel-image :global(img) {
 		height: 100%;
-		width: auto;
+		width: auto; /* natural width from height & aspect ratio */
+		max-width: min(65vw, 1100px); /* cap extreme ballooning without forcing gaps */
 		object-fit: contain;
 	}
 
