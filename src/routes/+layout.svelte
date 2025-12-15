@@ -6,8 +6,10 @@
 	import { onMount, setContext } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { writable } from 'svelte/store';
+    import { site } from '$lib/siteConfig';
+    import { jsonLdOrganization, jsonLdWebSite } from '$lib/seo';
 
-	let { children } = $props();
+	let { data, children } = $props();
 
 	const imageModules: Record<string, { default: string }> = import.meta.glob(
 		'$lib/assets/img/*.{jpg,jpeg,png,webp,avif}',
@@ -91,9 +93,33 @@
 
 	let isRootPage = $derived(page.url.pathname === '/');
 </script>
+<svelte:head>
+	<title>{data?.title ?? site.defaultTitle}</title>
+	<meta name="description" content={data?.description ?? site.defaultDescription} />
+	<meta name="robots" content="index, follow" />
+	<link rel="icon" href={favicon} />
+	{#if data?.canonical}
+		<link rel="canonical" href={data.canonical} />
+	{/if}
 
-<title>ofelia eme | film & digital photography | paris</title>
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+	<!-- Open Graph -->
+	<meta property="og:type" content="website" />
+	<meta property="og:site_name" content={site.name} />
+	<meta property="og:title" content={data?.title ?? site.defaultTitle} />
+	<meta property="og:description" content={data?.description ?? site.defaultDescription} />
+	<meta property="og:url" content={data?.canonical ?? site.url} />
+	<meta property="og:image" content={(data?.ogImage?.startsWith('http') ? data.ogImage : site.url + (data?.ogImage ?? site.defaultOgImage))} />
+
+	<!-- Twitter -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content={data?.title ?? site.defaultTitle} />
+	<meta name="twitter:description" content={data?.description ?? site.defaultDescription} />
+	<meta name="twitter:image" content={(data?.ogImage?.startsWith('http') ? data.ogImage : site.url + (data?.ogImage ?? site.defaultOgImage))} />
+
+	<!-- Structured Data -->
+	<script type="application/ld+json">{JSON.stringify(jsonLdOrganization())}</script>
+	<script type="application/ld+json">{JSON.stringify(jsonLdWebSite())}</script>
+</svelte:head>
 <div class="app" class:off-white={!isRootPage}>
 	<Header />
 	{#if isRootPage}
