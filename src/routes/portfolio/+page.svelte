@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { fade } from 'svelte/transition';
+	import { writable, get } from 'svelte/store';
+	import { portfolioCache, type PortfolioItem } from '$lib/stores/portfolio';
 
 	const imageModules: Record<string, { default: any }> = import.meta.glob(
 		'$lib/assets/img/*.{jpg,jpeg,png,webp,avif}',
@@ -9,8 +11,17 @@
 		}
 	);
 
-	let imageElements = $state<{ path: string; module: any; isPortrait: boolean }[]>([]);
-	let isReady = $state(false);
+	let imageElements = $state<PortfolioItem[]>([]);
+	const gridReady = writable(false);
+
+	// Initialize from cache synchronously to avoid first-render spinner
+	{
+		const cached = get(portfolioCache);
+		if (cached.ready) {
+			imageElements = cached.elements;
+			gridReady.set(true);
+		}
+	}
 
 	function resolveSrc(mod: any): string {
 		const m = mod?.default ?? mod;
@@ -18,6 +29,22 @@
 	}
 
 	onMount(() => {
+		const unsubscribe = portfolioCache.subscribe((cache) => {
+			if (cache.ready && imageElements.length === 0) {
+				imageElements = cache.elements;
+				gridReady.set(true);
+			}
+		});
+
+		// If cache not ready, load and then cache it
+		let currentCache: { elements: PortfolioItem[]; ready: boolean } | undefined;
+		const unsubOnce = portfolioCache.subscribe((c) => (currentCache = c));
+		unsubOnce();
+		if (currentCache && currentCache.ready) {
+			// already handled via subscription
+			return () => unsubscribe();
+		}
+
 		const entries = Object.entries(imageModules);
 		const loads = entries.map(([path, mod]) =>
 			new Promise<{ path: string; module: any; isPortrait: boolean }>((resolve) => {
@@ -36,23 +63,32 @@
 
 		Promise.all(loads).then((results) => {
 			imageElements = results;
-			isReady = true;
+			gridReady.set(true);
+			portfolioCache.set({ elements: results as PortfolioItem[], ready: true });
 		});
+		return () => unsubscribe();
 	});
 </script>
 
 
 <div class="gallery">
-	{#if isReady}
+	{#if $gridReady}
 	<div class="gallery-grid" transition:fade={{ duration: 1200 }}>
-		{#each imageElements as { path, module, isPortrait }}
-			<div class="gallery-item" class:portrait={isPortrait} class:landscape={!isPortrait}>
-				<enhanced:img src={module} alt="Photography by Ofelia" />
+		{#each imageElements as item (item.path)}
+			<div class="gallery-item" class:portrait={item.isPortrait} class:landscape={!item.isPortrait}>
+				<!-- Transparent overlay to intercept right-click/long-press/drag -->
+				<div class="image-guard"
+					aria-hidden="true"
+					oncontextmenu={(e) => e.preventDefault()}
+					onpointerdown={(e) => e.preventDefault()}
+					ondragstart={(e) => e.preventDefault()}>
+				</div>
+				<enhanced:img src={item.module} alt="Photography by Ofelia" draggable="false" />
 			</div>
 		{/each}
 	</div>
 	{:else}
-	<div class="loading-background" role="status" aria-busy="true" aria-label="Loading portfolio images" transition:fade={{ duration: 1000 }}>
+	<div class="loading-background" role="status" aria-busy="true" aria-label="Loading portfolio images" transition:fade={{ duration: 1200 }}>
 		<div class="spinner"></div>
 	</div>
 	{/if}
@@ -79,6 +115,14 @@
 		background: #f5f5f5;
 	}
 
+	/* Overlay guard prevents context menu and long-press save */
+	.image-guard {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		background: transparent;
+	}
+
 	.gallery-item.portrait {
 		grid-column: span 1;
 		aspect-ratio: 3 / 4;
@@ -94,6 +138,10 @@
 		height: 100%;
 		object-fit: cover;
 		transition: transform 0.3s ease;
+		pointer-events: none; /* prevent click/context on the img itself */
+		-webkit-user-drag: none;
+		user-select: none;
+		-webkit-touch-callout: none; /* iOS long-press menu */
 	}
 
 	.gallery-item:hover :global(img) {

@@ -1,8 +1,8 @@
 export const site = {
   name: 'Ofelia Eme Photography',
   url: 'https://ofeliaemephoto.com',
-  titleTemplate: '%s | Ofelia Eme',
-  defaultTitle: 'Ofelia Eme | Film & Digital Photography | Paris',
+  titleTemplate: '%s | ofelia eme',
+  defaultTitle: 'ofelia eme | film & digital photography | paris',
   defaultDescription:
     'Paris-based photographer specializing in product, interior, travel and lifestyle photography — shooting film and digital.',
   social: {

@@ -6,15 +6,10 @@
 
 <div class="contact">
 	<div class="contact-content">
-		<h1>Get In Touch</h1>
-		<p class="intro">
-			Have a question or interested in booking a session? I'd love to hear from you. Fill out the
-			form below and I'll get back to you as soon as possible.
-		</p>
-
+		<h1>get in touch</h1>
 		{#if form?.success}
 			<div class="success-message">
-				<p>Thank you for your message! I'll get back to you soon.</p>
+				<p>thank you for your message, i'll get back to you soon</p>
 			</div>
 		{/if}
 
@@ -26,21 +21,21 @@
 
 		<form method="POST" use:enhance>
 			<div class="form-group">
-				<label for="name">Name *</label>
+				<label for="name">name *</label>
 				<input type="text" id="name" name="name" required />
 			</div>
 
 			<div class="form-group">
-				<label for="email">Email *</label>
+				<label for="email">email *</label>
 				<input type="email" id="email" name="email" required />
 			</div>
 
 			<div class="form-group">
-				<label for="message">Message *</label>
+				<label for="message">message *</label>
 				<textarea id="message" name="message" rows="6" required></textarea>
 			</div>
 
-			<button type="submit" class="submit-btn">Send Message</button>
+			<button type="submit" class="submit-btn">send message</button>
 		</form>
 	</div>
 </div>
@@ -54,20 +49,14 @@
 
 	.contact-content {
 		text-align: left;
+		margin-bottom: 2rem;
 	}
 
 	h1 {
-		font-size: 2.5rem;
-		font-weight: 600;
-		margin-bottom: 1rem;
+		font-size: 1.75rem;
+		font-weight: 200;
+		margin-bottom: .5rem;
 		color: #111;
-	}
-
-	.intro {
-		font-size: 1.1rem;
-		color: #666;
-		margin-bottom: 2rem;
-		line-height: 1.6;
 	}
 
 	.success-message {
@@ -97,6 +86,7 @@
 	}
 
 	form {
+		margin-top: 1rem;
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
@@ -164,10 +154,6 @@
 
 		h1 {
 			font-size: 2rem;
-		}
-
-		.intro {
-			font-size: 1rem;
 		}
 	}
 </style>

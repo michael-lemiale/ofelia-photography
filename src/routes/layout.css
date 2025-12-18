@@ -27,3 +27,13 @@ html, body {
 	font-family: var(--font-sans);
 	font-weight: 300; /* prefer Light as default */
 }
+
+/* Ensure form controls and headings inherit Nunito Sans globally */
+:global(button, input, textarea, select) {
+	font-family: var(--font-sans);
+}
+
+:global(h1, h2, h3, h4, h5, h6) {
+	font-family: var(--font-sans);
+	font-weight: 600; /* maintain heading emphasis */
+}
