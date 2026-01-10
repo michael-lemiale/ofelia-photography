@@ -1,7 +1,7 @@
 {
 	"name": "ofelia-photography",
 	"private": true,
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
@@ -18,26 +18,26 @@
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^7.0.0",
 		"@sveltejs/enhanced-img": "^0.9.2",
-		"@sveltejs/kit": "^2.49.1",
-		"@sveltejs/vite-plugin-svelte": "^6.2.1",
-		"@tailwindcss/forms": "^0.5.10",
+		"@sveltejs/kit": "^2.49.4",
+		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@tailwindcss/forms": "^0.5.11",
 		"@tailwindcss/typography": "^0.5.19",
-		"@tailwindcss/vite": "^4.1.17",
-		"@types/nodemailer": "^7.0.4",
-		"@vitest/browser-playwright": "^4.0.15",
+		"@tailwindcss/vite": "^4.1.18",
+		"@types/nodemailer": "^7.0.5",
+		"@vitest/browser-playwright": "^4.0.16",
 		"playwright": "^1.57.0",
 		"prettier": "^3.7.4",
-		"prettier-plugin-svelte": "^3.4.0",
+		"prettier-plugin-svelte": "^3.4.1",
 		"prettier-plugin-tailwindcss": "^0.7.2",
-		"svelte": "^5.45.6",
-		"svelte-check": "^4.3.4",
-		"tailwindcss": "^4.1.17",
+		"svelte": "^5.46.1",
+		"svelte-check": "^4.3.5",
+		"tailwindcss": "^4.1.18",
 		"typescript": "^5.9.3",
-		"vite": "^7.2.6",
-		"vitest": "^4.0.15",
+		"vite": "^7.3.1",
+		"vitest": "^4.0.16",
 		"vitest-browser-svelte": "^2.0.1"
 	},
 	"dependencies": {
-		"nodemailer": "^7.0.11"
+		"nodemailer": "^7.0.12"
 	}
 }

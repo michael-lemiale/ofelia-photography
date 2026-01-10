@@ -14,6 +14,9 @@
                 let's work together
 			</p>
 			<p>
+				- info@ofeliaemephoto.com
+			</p>
+			<p>
 				<a href="https://www.instagram.com/ofeliaemephoto" target="_blank" rel="noopener noreferrer">- instagram</a>
 			</p>
 		</div>

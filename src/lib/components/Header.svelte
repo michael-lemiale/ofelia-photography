@@ -37,7 +37,6 @@
 						<a href="/" class:active={isActive('/')} onclick={closeMenu}>Home</a>
 						<a href="/portfolio" class:active={isActive('/portfolio')} onclick={closeMenu}>Portfolio</a>
 						<a href="/about" class:active={isActive('/about')} onclick={closeMenu}>About</a>
-						<a href="/contact" class:active={isActive('/contact')} onclick={closeMenu}>Contact</a>
 					</div>
 				{/if}
 			</div>
@@ -47,7 +46,6 @@
 			<nav class="desktop-nav">
 				<a href="/portfolio" class:active={isActive('/portfolio')}>PORTFOLIO</a>
 				<a href="/about" class:active={isActive('/about')}>ABOUT</a>
-				<a href="/contact" class:active={isActive('/contact')}>CONTACT</a>
 			</nav>
 		</div>
 	{/if}

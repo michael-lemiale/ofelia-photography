@@ -52,7 +52,6 @@ pnpm preview
 - Dynamic image carousel on home page
 - Portfolio gallery with responsive layout
 - About page
-- Contact form with ProtonMail SMTP integration
 - Responsive design for mobile and desktop
 
 ## Project Structure

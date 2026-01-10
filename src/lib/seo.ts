@@ -10,7 +10,7 @@ export function jsonLdOrganization() {
     contactPoint: {
       '@type': 'ContactPoint',
       email: site.contactEmail,
-      contactType: 'customer service'
+      contactType: 'direct'
     }
   };
 }
