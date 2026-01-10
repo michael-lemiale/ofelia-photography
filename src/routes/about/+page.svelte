@@ -2,19 +2,19 @@
 	<div class="about-content">
 		<div class="about-text">
 			<p>
-                a collection of images taken by Ofelia
+                I’m Ofelia, a Paris based photographer specializing in fashion, lifestyle, portrait, and editorial photography. I work with brands, creatives, and individuals to create images that feel natural, intentional, and expressive. Based in Paris, France, I’m available for projects worldwide.
 			</p>
 			<p>
-				shooting film and digital, based out of Paris
+				My approach to photography is rooted in observation and ease. I’m drawn to honest moments, thoughtful details, and images that feel lived-in rather than overly posed. Whether I’m photographing people, spaces, or products, my goal is always the same — to create work that feels timeless, refined, and grounded.
 			</p>
 			<p>
-                specializing in fashion, interior, travel and lifestyle photography
+                I primarily work with natural light, blending a relaxed sensibility with clean and considered composition. I aim to make shoots feel collaborative and unforced — creating space for comfort, movement, and authenticity.
 			</p>
 			<p>
-                let's work together
+                My background in writing and visual storytelling deeply informs the way I photograph .As a Mexican American now based in Paris, my work is deeply influenced by a mix of cultures, textures, and everyday rituals. I’m especially inspired by subtle gestures, quiet luxury, and the beauty of the in between — the moments that often say the most.
 			</p>
 			<p>
-				info@ofeliaemephoto.com
+				For bookings, collaborations, or editorial inquiries, feel free to get in touch at info@ofeliaemephoto.com.
 			</p>
 			<p>
 				<a href="https://www.instagram.com/ofeliaemephoto" target="_blank" rel="noopener noreferrer">@ofeliaemephoto</a>
