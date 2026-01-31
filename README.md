@@ -10,7 +10,7 @@ A modern photography portfolio website built with SvelteKit.
 It is recommended to use [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js versions. You can switch to the correct version by running:
 
 ```sh
-nvm use
+nvm use 
 ```
 
 ## Setup
@@ -19,13 +19,6 @@ nvm use
 
 ```sh
 bun install
-```
-
-2. Create a `.env` file in the project root with your SMTP credentials:
-
-```sh
-SMTP_USER=your-email
-SMTP_PASS=your-app-password
 ```
 
 ## Development
@@ -44,7 +37,7 @@ bun dev --open
 To create a production version:
 
 ```sh
-bun build
+bun run build
 ```
 
 Preview the production build:
