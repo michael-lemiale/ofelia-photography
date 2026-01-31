@@ -4,15 +4,21 @@ A modern photography portfolio website built with SvelteKit.
 
 ## Prerequisites
 
-- Node.js (v18 or higher)
-- pnpm
+- Node.js (v20.11.0 or higher)
+- Bun (v1.3.8 or higher)
+
+It is recommended to use [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js versions. You can switch to the correct version by running:
+
+```sh
+nvm use
+```
 
 ## Setup
 
 1. Clone the repository and install dependencies:
 
 ```sh
-pnpm install
+bun install
 ```
 
 2. Create a `.env` file in the project root with your SMTP credentials:
@@ -27,10 +33,10 @@ SMTP_PASS=your-app-password
 Start the development server:
 
 ```sh
-pnpm dev
+bun dev
 
 # or start the server and open the app in a new browser tab
-pnpm dev --open
+bun dev --open
 ```
 
 ## Building
@@ -38,13 +44,13 @@ pnpm dev --open
 To create a production version:
 
 ```sh
-pnpm build
+bun build
 ```
 
 Preview the production build:
 
 ```sh
-pnpm preview
+bun preview
 ```
 
 ## Features

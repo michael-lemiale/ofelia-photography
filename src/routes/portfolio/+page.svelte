@@ -7,7 +7,7 @@
 	const imageModules: Record<string, { default: any }> = import.meta.glob(
 		'$lib/assets/img/*.{jpg,jpeg,png,webp,avif}',
 		{
-			eager: true,
+			eager: true
 		}
 	);
 
@@ -46,19 +46,19 @@
 		}
 
 		const entries = Object.entries(imageModules);
-		const loads = entries.map(([path, mod]) =>
-			new Promise<{ path: string; module: any; isPortrait: boolean }>((resolve) => {
-				const img = new Image();
-				img.onload = () =>
-					resolve({
-						path,
-						module: mod.default,
-						isPortrait: img.height > img.width
-					});
-				img.onerror = () =>
-					resolve({ path, module: mod.default, isPortrait: false });
-				img.src = resolveSrc(mod);
-			})
+		const loads = entries.map(
+			([path, mod]) =>
+				new Promise<{ path: string; module: any; isPortrait: boolean }>((resolve) => {
+					const img = new Image();
+					img.onload = () =>
+						resolve({
+							path,
+							module: mod.default,
+							isPortrait: img.height > img.width
+						});
+					img.onerror = () => resolve({ path, module: mod.default, isPortrait: false });
+					img.src = resolveSrc(mod);
+				})
 		);
 
 		Promise.all(loads).then((results) => {
@@ -70,27 +70,37 @@
 	});
 </script>
 
-
 <div class="gallery">
 	{#if $gridReady}
-	<div class="gallery-grid" transition:fade={{ duration: 1200 }}>
-		{#each imageElements as item (item.path)}
-			<div class="gallery-item" class:portrait={item.isPortrait} class:landscape={!item.isPortrait}>
-				<!-- Transparent overlay to intercept right-click/long-press/drag -->
-				<div class="image-guard"
-					aria-hidden="true"
-					oncontextmenu={(e) => e.preventDefault()}
-					onpointerdown={(e) => e.preventDefault()}
-					ondragstart={(e) => e.preventDefault()}>
+		<div class="gallery-grid" transition:fade={{ duration: 1200 }}>
+			{#each imageElements as item (item.path)}
+				<div
+					class="gallery-item"
+					class:portrait={item.isPortrait}
+					class:landscape={!item.isPortrait}
+				>
+					<!-- Transparent overlay to intercept right-click/long-press/drag -->
+					<div
+						class="image-guard"
+						aria-hidden="true"
+						oncontextmenu={(e) => e.preventDefault()}
+						onpointerdown={(e) => e.preventDefault()}
+						ondragstart={(e) => e.preventDefault()}
+					></div>
+					<enhanced:img src={item.module} alt="Photography by Ofelia" draggable="false" />
 				</div>
-				<enhanced:img src={item.module} alt="Photography by Ofelia" draggable="false" />
-			</div>
-		{/each}
-	</div>
+			{/each}
+		</div>
 	{:else}
-	<div class="loading-background" role="status" aria-busy="true" aria-label="Loading portfolio images" transition:fade={{ duration: 1200 }}>
-		<div class="spinner"></div>
-	</div>
+		<div
+			class="loading-background"
+			role="status"
+			aria-busy="true"
+			aria-label="Loading portfolio images"
+			transition:fade={{ duration: 1200 }}
+		>
+			<div class="spinner"></div>
+		</div>
 	{/if}
 </div>
 
@@ -181,7 +191,11 @@
 	}
 
 	@keyframes spin {
-		from { transform: rotate(0deg); }
-		to { transform: rotate(360deg); }
+		from {
+			transform: rotate(0deg);
+		}
+		to {
+			transform: rotate(360deg);
+		}
 	}
 </style>

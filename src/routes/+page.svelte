@@ -7,12 +7,12 @@
 </script>
 
 {#if $carouselReady}
-<div class="home" transition:fade={{ duration: 200 }}>
-	<nav class="home-nav">
-		<a href="/portfolio" class="nav-link">PORTFOLIO</a>
-		<a href="/about" class="nav-link">ABOUT</a>
-	</nav>
-</div>
+	<div class="home" transition:fade={{ duration: 200 }}>
+		<nav class="home-nav">
+			<a href="/portfolio" class="nav-link">PORTFOLIO</a>
+			<a href="/about" class="nav-link">ABOUT</a>
+		</nav>
+	</div>
 {/if}
 
 <style>
@@ -26,7 +26,7 @@
 	.home-nav {
 		display: flex;
 		flex-direction: column;
-		gap: .5rem;
+		gap: 0.5rem;
 		align-items: center;
 	}
 
@@ -36,7 +36,9 @@
 		color: #fff;
 		text-decoration: none;
 		letter-spacing: 0.2em;
-		transition: transform 0.3s ease, opacity 0.3s ease;
+		transition:
+			transform 0.3s ease,
+			opacity 0.3s ease;
 		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
 	}
 

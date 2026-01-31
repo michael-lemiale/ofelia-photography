@@ -20,7 +20,7 @@
 
 <header>
 	{#if isRootPage}
-		<div class="container root-only">
+		<div class="root-only container">
 			<h1 class="logo"><a href="/">OFELIA EME</a></h1>
 		</div>
 	{:else}
@@ -35,7 +35,9 @@
 				{#if isMenuOpen}
 					<div class="menu-dropdown">
 						<a href="/" class:active={isActive('/')} onclick={closeMenu}>Home</a>
-						<a href="/portfolio" class:active={isActive('/portfolio')} onclick={closeMenu}>Portfolio</a>
+						<a href="/portfolio" class:active={isActive('/portfolio')} onclick={closeMenu}
+							>Portfolio</a
+						>
 						<a href="/about" class:active={isActive('/about')} onclick={closeMenu}>About</a>
 					</div>
 				{/if}
@@ -94,7 +96,7 @@
 		text-decoration: none;
 		letter-spacing: 0.5rem;
 		justify-self: start;
-		text-shadow: 1px 1px 2px rgba(0, 0, 0, .25);
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
 	}
 
 	.logo a {

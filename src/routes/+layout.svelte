@@ -6,8 +6,8 @@
 	import { onMount, setContext } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { writable } from 'svelte/store';
-    import { site } from '$lib/siteConfig';
-    import { jsonLdOrganization, jsonLdWebSite } from '$lib/seo';
+	import { site } from '$lib/siteConfig';
+	import { jsonLdOrganization, jsonLdWebSite } from '$lib/seo';
 
 	let { data, children } = $props();
 
@@ -73,11 +73,11 @@
 		isCarouselReady = true;
 		carouselReady.set(true);
 	});
-	
+
 	// Start at a random position
 	const randomStart = Math.floor(Math.random() * imageUrls.length);
 	const rotatedUrls = [...imageUrls.slice(randomStart), ...imageUrls.slice(0, randomStart)];
-	
+
 	// Duplicate images for seamless loop (triplicate for smoother wrap)
 	const duplicatedUrls = [...rotatedUrls, ...rotatedUrls, ...rotatedUrls];
 
@@ -113,14 +113,11 @@
 			if (alt !== undefined) baseHeightsVh[0] = alt;
 		}
 	}
-	const heightsVh: number[] = [
-		...baseHeightsVh,
-		...baseHeightsVh,
-		...baseHeightsVh
-	];
+	const heightsVh: number[] = [...baseHeightsVh, ...baseHeightsVh, ...baseHeightsVh];
 
 	let isRootPage = $derived(page.url.pathname === '/');
 </script>
+
 <svelte:head>
 	<title>{data?.title ?? site.defaultTitle}</title>
 	<meta name="description" content={data?.description ?? site.defaultDescription} />
@@ -136,17 +133,33 @@
 	<meta property="og:title" content={data?.title ?? site.defaultTitle} />
 	<meta property="og:description" content={data?.description ?? site.defaultDescription} />
 	<meta property="og:url" content={data?.canonical ?? site.url} />
-	<meta property="og:image" content={(data?.ogImage?.startsWith('http') ? data.ogImage : site.url + (data?.ogImage ?? site.defaultOgImage))} />
+	<meta
+		property="og:image"
+		content={data?.ogImage?.startsWith('http')
+			? data.ogImage
+			: site.url + (data?.ogImage ?? site.defaultOgImage)}
+	/>
 
 	<!-- Twitter -->
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content={data?.title ?? site.defaultTitle} />
 	<meta name="twitter:description" content={data?.description ?? site.defaultDescription} />
-	<meta name="twitter:image" content={(data?.ogImage?.startsWith('http') ? data.ogImage : site.url + (data?.ogImage ?? site.defaultOgImage))} />
+	<meta
+		name="twitter:image"
+		content={data?.ogImage?.startsWith('http')
+			? data.ogImage
+			: site.url + (data?.ogImage ?? site.defaultOgImage)}
+	/>
 
 	<!-- Structured Data -->
-	<script type="application/ld+json">{JSON.stringify(jsonLdOrganization())}</script>
-	<script type="application/ld+json">{JSON.stringify(jsonLdWebSite())}</script>
+	<!-- prettier-ignore -->
+	<script type="application/ld+json">
+{@html JSON.stringify(jsonLdOrganization())}
+	</script>
+	<!-- prettier-ignore -->
+	<script type="application/ld+json">
+{@html JSON.stringify(jsonLdWebSite())}
+	</script>
 </svelte:head>
 <div class="app" class:off-white={!isRootPage}>
 	<Header />
@@ -163,7 +176,13 @@
 				<div class="overlay"></div>
 			</div>
 		{:else}
-			<div class="loading-background" transition:fade={{ duration: 2000 }} aria-busy="true" role="status" aria-label="Loading photos">
+			<div
+				class="loading-background"
+				transition:fade={{ duration: 2000 }}
+				aria-busy="true"
+				role="status"
+				aria-label="Loading photos"
+			>
 				<div class="spinner"></div>
 			</div>
 		{/if}
@@ -306,11 +325,17 @@
 	}
 
 	/* Use a safe viewport unit for dynamic heights (fallback to 1vh) */
-	:root { --vh: 1vh; }
+	:root {
+		--vh: 1vh;
+	}
 	@supports (height: 1svh) {
-		:root { --vh: 1svh; }
+		:root {
+			--vh: 1svh;
+		}
 	}
 	@supports (height: 1dvh) {
-		:root { --vh: 1dvh; }
+		:root {
+			--vh: 1dvh;
+		}
 	}
 </style>
