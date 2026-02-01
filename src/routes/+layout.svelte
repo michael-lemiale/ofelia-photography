@@ -197,6 +197,14 @@
 				<div class="carousel-track">
 					{#each duplicatedUrls as url, i}
 						<div class="carousel-image" style={`height: calc(var(--vh) * ${heightsVh[i]});`}>
+							<!-- Transparent overlay to intercept right-click/long-press/drag -->
+							<div
+								class="image-guard"
+								aria-hidden="true"
+								oncontextmenu={(e) => e.preventDefault()}
+								onpointerdown={(e) => e.preventDefault()}
+								ondragstart={(e) => e.preventDefault()}
+							></div>
 							<img src={url} alt="Photography by Ofelia Eme" />
 						</div>
 					{/each}
@@ -300,6 +308,7 @@
 	}
 
 	.carousel-image {
+		position: relative;
 		flex-shrink: 0;
 		height: auto;
 		max-height: 100%;
@@ -315,6 +324,18 @@
 		max-width: none; /* allow width to grow to satisfy height */
 		object-fit: contain;
 		display: block;
+		pointer-events: none; /* prevent click/context on the img itself */
+		-webkit-user-drag: none;
+		user-select: none;
+		-webkit-touch-callout: none; /* iOS long-press menu */
+	}
+
+	/* Overlay guard prevents context menu and long-press save */
+	.image-guard {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		background: transparent;
 	}
 
 	/* Keep a reasonable cap for large screens only */

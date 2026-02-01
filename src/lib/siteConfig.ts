@@ -11,5 +11,5 @@ export const site = {
 		substack: 'https://oferodrig.substack.com/'
 	},
 	contactEmail: 'info@ofeliaemephoto.com',
-	defaultOgImage: '/default.svg'
+	defaultOgImage: '/static/default.svg'
 } as const;
