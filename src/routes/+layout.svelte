@@ -11,13 +11,7 @@
 
 	let { data, children } = $props();
 
-	const imageModules: Record<string, { default: string }> = import.meta.glob(
-		'$lib/assets/img/*.{jpg,jpeg,png,webp,avif}',
-		{ eager: true }
-	);
-
-	// Always resolve to string URLs for runtime usage
-	const imageUrls: string[] = Object.values(imageModules).map((m) => m.default);
+	let imageUrls: string[] = $state([]);
 
 	let isCarouselReady = $state(false);
 	const carouselReady = writable(false);
@@ -66,27 +60,58 @@
 		await Promise.all(urls.map((u) => loadImage(u)));
 	}
 
+	// Fisher-Yates shuffle algorithm
+	function shuffleArray<T>(array: T[]): T[] {
+		const shuffled = [...array];
+		for (let i = shuffled.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+		}
+		return shuffled;
+	}
+
 	onMount(async () => {
-		// Preload the unique set of images (not the duplicates)
-		await preloadImages(imageUrls);
-		console.log('Carousel image URLs:', imageUrls.slice(0, 5));
+		// Fetch images from R2
+		try {
+			const response = await fetch('/api/images');
+			const data = await response.json();
+			if (data.images && data.images.length > 0) {
+				const urls = data.images.map((img: { url: string }) => img.url);
+				// Randomize the order
+				imageUrls = shuffleArray(urls);
+			} else {
+				console.error('No images found from R2');
+				imageUrls = [];
+			}
+		} catch (error) {
+			console.error('Failed to load carousel images:', error);
+			imageUrls = [];
+		}
+
+		// Preload the images
+		if (imageUrls.length > 0) {
+			await preloadImages(imageUrls);
+			console.log('Carousel image URLs:', imageUrls.slice(0, 5));
+		}
+		
 		isCarouselReady = true;
 		carouselReady.set(true);
 	});
 
 	// Start at a random position
-	const randomStart = Math.floor(Math.random() * imageUrls.length);
-	const rotatedUrls = [...imageUrls.slice(randomStart), ...imageUrls.slice(0, randomStart)];
+	let randomStart = $derived(Math.floor(Math.random() * imageUrls.length));
+	let rotatedUrls = $derived([...imageUrls.slice(randomStart), ...imageUrls.slice(0, randomStart)]);
 
 	// Duplicate images for seamless loop (triplicate for smoother wrap)
-	const duplicatedUrls = [...rotatedUrls, ...rotatedUrls, ...rotatedUrls];
+	let duplicatedUrls = $derived([...rotatedUrls, ...rotatedUrls, ...rotatedUrls]);
 
 	// Vary image heights for visual interest, but keep them identical across triplicates
-	const heightOptions = [50, 75, 100];
-	const baseHeightsVh: number[] = [];
-	{
+	const heightOptions = [60, 75, 90];
+	let baseHeightsVh = $derived.by(() => {
+		const heights: number[] = [];
 		let last: number | null = null;
 		let streak = 0; // count of consecutive same values
+
 		for (let i = 0; i < rotatedUrls.length; i++) {
 			let choice = heightOptions[Math.floor(Math.random() * heightOptions.length)];
 			// Prevent forming a triple streak
@@ -94,7 +119,7 @@
 				const alternatives = heightOptions.filter((h) => h !== last);
 				choice = alternatives[Math.floor(Math.random() * alternatives.length)];
 			}
-			baseHeightsVh.push(choice);
+			heights.push(choice);
 			if (last === choice) streak += 1;
 			else {
 				last = choice;
@@ -104,16 +129,19 @@
 
 		// Also prevent a wrap-around triple across the seam of repeated tracks
 		if (
-			baseHeightsVh.length >= 2 &&
-			baseHeightsVh[baseHeightsVh.length - 1] === baseHeightsVh[0] &&
-			baseHeightsVh[0] === baseHeightsVh[1]
+			heights.length >= 2 &&
+			heights[heights.length - 1] === heights[0] &&
+			heights[0] === heights[1]
 		) {
-			const forbidden = new Set([baseHeightsVh[0]]);
+			const forbidden = new Set([heights[0]]);
 			const alt = heightOptions.find((h) => !forbidden.has(h));
-			if (alt !== undefined) baseHeightsVh[0] = alt;
+			if (alt !== undefined) heights[0] = alt;
 		}
-	}
-	const heightsVh: number[] = [...baseHeightsVh, ...baseHeightsVh, ...baseHeightsVh];
+		
+		return heights;
+	});
+	
+	let heightsVh = $derived([...baseHeightsVh, ...baseHeightsVh, ...baseHeightsVh]);
 
 	let isRootPage = $derived(page.url.pathname === '/');
 </script>
@@ -165,7 +193,7 @@
 	<Header />
 	{#if isRootPage}
 		{#if isCarouselReady}
-			<div class="carousel-background" transition:fade={{ duration: 250 }}>
+			<div class="carousel-background" transition:fade={{ duration: 800 }}>
 				<div class="carousel-track">
 					{#each duplicatedUrls as url, i}
 						<div class="carousel-image" style={`height: calc(var(--vh) * ${heightsVh[i]});`}>
@@ -256,7 +284,7 @@
 		height: 100dvh; /* dynamic viewport height */
 		height: calc(var(--vh) * 100); /* JS-set visual viewport height */
 		width: max-content;
-		animation: scroll 70s linear infinite;
+		animation: scroll 600s linear infinite;
 		align-items: flex-end;
 		will-change: transform;
 	}

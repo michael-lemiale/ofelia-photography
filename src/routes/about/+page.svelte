@@ -2,9 +2,9 @@
 	<div class="about-content">
 		<div class="about-text">
 			<p>
-				I’m Ofelia, a Paris based photographer specializing in fashion, lifestyle, portrait, and
+				Hello! I’m Ofelia, a Paris based photographer specializing in fashion, lifestyle, portrait, and
 				editorial photography. I work with brands, creatives, and individuals to create images that
-				feel natural, intentional, and expressive. Based in Paris, France, I’m available for
+				feel natural, intentional, and expressive. I'm based in Paris, France, and available for
 				projects worldwide.
 			</p>
 			<p>
@@ -19,7 +19,7 @@
 				space for comfort, movement, and authenticity.
 			</p>
 			<p>
-				My background in writing and visual storytelling deeply informs the way I photograph .As a
+				My background in writing and visual storytelling deeply informs the way I photograph. As a
 				Mexican American now based in Paris, my work is deeply influenced by a mix of cultures,
 				textures, and everyday rituals. I’m especially inspired by subtle gestures, quiet luxury,
 				and the beauty of the in between — the moments that often say the most.

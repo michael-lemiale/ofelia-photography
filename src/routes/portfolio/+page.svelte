@@ -1,18 +1,21 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 	import { writable, get } from 'svelte/store';
 	import { portfolioCache, type PortfolioItem } from '$lib/stores/portfolio';
 
-	const imageModules: Record<string, { default: any }> = import.meta.glob(
-		'$lib/assets/img/*.{jpg,jpeg,png,webp,avif}',
-		{
-			eager: true
-		}
-	);
-
 	let imageElements = $state<PortfolioItem[]>([]);
 	const gridReady = writable(false);
+
+	// Fisher-Yates shuffle algorithm
+	function shuffleArray<T>(array: T[]): T[] {
+		const shuffled = [...array];
+		for (let i = shuffled.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+		}
+		return shuffled;
+	}
 
 	// Initialize from cache synchronously to avoid first-render spinner
 	{
@@ -23,11 +26,6 @@
 		}
 	}
 
-	function resolveSrc(mod: any): string {
-		const m = mod?.default ?? mod;
-		return m?.img?.src || m?.src || (typeof m === 'string' ? m : '');
-	}
-
 	onMount(() => {
 		const unsubscribe = portfolioCache.subscribe((cache) => {
 			if (cache.ready && imageElements.length === 0) {
@@ -36,7 +34,7 @@
 			}
 		});
 
-		// If cache not ready, load and then cache it
+		// If cache not ready, load from API
 		let currentCache: { elements: PortfolioItem[]; ready: boolean } | undefined;
 		const unsubOnce = portfolioCache.subscribe((c) => (currentCache = c));
 		unsubOnce();
@@ -45,27 +43,50 @@
 			return () => unsubscribe();
 		}
 
-		const entries = Object.entries(imageModules);
-		const loads = entries.map(
-			([path, mod]) =>
-				new Promise<{ path: string; module: any; isPortrait: boolean }>((resolve) => {
-					const img = new Image();
-					img.onload = () =>
-						resolve({
-							path,
-							module: mod.default,
-							isPortrait: img.height > img.width
-						});
-					img.onerror = () => resolve({ path, module: mod.default, isPortrait: false });
-					img.src = resolveSrc(mod);
-				})
-		);
+		// Fetch images from R2 via API
+		fetch('/api/images')
+			.then((res) => res.json())
+			.then((data) => {
+				if (data.error) {
+					console.error('Failed to load images:', data.error);
+					return;
+				}
 
-		Promise.all(loads).then((results) => {
-			imageElements = results;
-			gridReady.set(true);
-			portfolioCache.set({ elements: results as PortfolioItem[], ready: true });
-		});
+				// Load images to determine orientation
+				const loads = data.images.map(
+					(image: { url: string; key: string; filename: string }) =>
+						new Promise<PortfolioItem>((resolve) => {
+							const img = new Image();
+							img.onload = () =>
+								resolve({
+									url: image.url,
+									key: image.key,
+									filename: image.filename,
+									isPortrait: img.height > img.width
+								});
+							img.onerror = () =>
+								resolve({
+									url: image.url,
+									key: image.key,
+									filename: image.filename,
+									isPortrait: false
+								});
+							img.src = image.url;
+						})
+				);
+
+				Promise.all(loads).then((results) => {
+					// Shuffle the results for randomized display
+					const shuffled = shuffleArray(results);
+					imageElements = shuffled;
+					gridReady.set(true);
+					portfolioCache.set({ elements: shuffled, ready: true });
+				});
+			})
+			.catch((error) => {
+				console.error('Failed to fetch images:', error);
+			});
+
 		return () => unsubscribe();
 	});
 </script>
@@ -73,7 +94,7 @@
 <div class="gallery">
 	{#if $gridReady}
 		<div class="gallery-grid" transition:fade={{ duration: 1200 }}>
-			{#each imageElements as item (item.path)}
+			{#each imageElements as item (item.key)}
 				<div
 					class="gallery-item"
 					class:portrait={item.isPortrait}
@@ -87,7 +108,7 @@
 						onpointerdown={(e) => e.preventDefault()}
 						ondragstart={(e) => e.preventDefault()}
 					></div>
-					<enhanced:img src={item.module} alt="Photography by Ofelia" draggable="false" />
+					<img src={item.url} alt="Photography by Ofelia" draggable="false" loading="lazy" />
 				</div>
 			{/each}
 		</div>
@@ -121,7 +142,6 @@
 	.gallery-item {
 		position: relative;
 		overflow: hidden;
-		border-radius: 8px;
 		background: #f5f5f5;
 	}
 
@@ -143,7 +163,7 @@
 		aspect-ratio: 16 / 9;
 	}
 
-	.gallery-item :global(img) {
+	.gallery-item img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
@@ -154,7 +174,7 @@
 		-webkit-touch-callout: none; /* iOS long-press menu */
 	}
 
-	.gallery-item:hover :global(img) {
+	.gallery-item:hover img {
 		transform: scale(1.05);
 	}
 
