@@ -32,6 +32,19 @@ bun dev
 bun dev --open
 ```
 
+### Local dev with Cloudflare R2 (remote bindings)
+
+For local development that uses Cloudflare R2 bindings (same as production), run the Cloudflare Pages worker locally:
+
+```sh
+bun run build
+bun x wrangler dev .svelte-kit/cloudflare/_worker.js --env production
+```
+
+Notes:
+- This uses the R2 binding defined in wrangler.toml and the production bucket.
+- If you want a preview bucket instead, set up `preview_bucket_name` and run without `--env production`.
+
 ## Building
 
 To create a production version:
@@ -57,4 +70,3 @@ bun preview
 
 - `/src/routes` - Page components and routing
 - `/src/lib/components` - Reusable components
-- `/src/lib/assets/img` - Portfolio images

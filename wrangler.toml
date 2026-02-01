@@ -1,3 +1,23 @@
 name = "ofelia-photography"
 compatibility_date = "2026-01-01"
-pages_build_output_dir = ".svelte-kit/cloudflare"
+main = ".svelte-kit/cloudflare/_worker.js"
+
+[assets]
+directory = ".svelte-kit/cloudflare"
+binding = "ASSETS"
+
+[vars]
+R2_PUBLIC_URL = "https://images.ofeliaemephoto.com"
+
+[env.production.vars]
+R2_PUBLIC_URL = "https://images.ofeliaemephoto.com"
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "ofelia-photography-images"
+remote = true
+
+[[env.production.r2_buckets]]
+binding = "BUCKET"
+bucket_name = "ofelia-photography-images"
+remote = true
