@@ -2,8 +2,8 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const GET: RequestHandler = async ({ platform }) => {
 	try {
-		const bucket = platform?.env?.BUCKET as any;
-		const publicUrl = platform?.env?.R2_PUBLIC_URL as string | undefined;
+		const bucket = (platform as any)?.env?.BUCKET;
+		const publicUrl = (platform as any)?.env?.R2_PUBLIC_URL as string | undefined;
 
 		if (!bucket || !publicUrl) {
 			return json(
