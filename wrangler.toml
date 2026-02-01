@@ -4,6 +4,7 @@ main = ".svelte-kit/cloudflare/_worker.js"
 
 [assets]
 directory = ".svelte-kit/cloudflare"
+binding = "ASSETS"
 
 [vars]
 R2_PUBLIC_URL = "https://images.ofeliaemephoto.com"
