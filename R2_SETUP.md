@@ -137,7 +137,7 @@ The script will:
    bun run dev
    ```
 
-2. Navigate to `/portfolio` in your browser
+2. Navigate to `/work` in your browser
 
 3. Images should load from R2 instead of local files
 

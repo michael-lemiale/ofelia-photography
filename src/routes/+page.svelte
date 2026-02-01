@@ -9,7 +9,7 @@
 {#if $carouselReady}
 	<div class="home" transition:fade={{ duration: 200 }}>
 		<nav class="home-nav">
-			<a href="/portfolio" class="nav-link">PORTFOLIO</a>
+			<a href="/work" class="nav-link">SELECTED WORK</a>
 			<a href="/about" class="nav-link">ABOUT</a>
 		</nav>
 	</div>

@@ -9,7 +9,7 @@
 			</p>
 			<p>
 				My approach to photography is rooted in observation and ease. I’m drawn to honest moments,
-				thoughtful details, and images that feel lived-in rather than overly posed. Whether I’m
+				thoughtful details, and images that feel lived in rather than overly posed. Whether I’m
 				photographing people, spaces, or products, my goal is always the same — to create work that
 				feels timeless, refined, and grounded.
 			</p>
@@ -21,12 +21,11 @@
 			<p>
 				My background in writing and visual storytelling deeply informs the way I photograph. As a
 				Mexican American now based in Paris, my work is deeply influenced by a mix of cultures,
-				textures, and everyday rituals. I’m especially inspired by subtle gestures, quiet luxury,
+				textures, and everyday rituals. I’m especially inspired by subtle gestures, simplicity,
 				and the beauty of the in between — the moments that often say the most.
 			</p>
 			<p>
-				For bookings, collaborations, or editorial inquiries, feel free to get in touch at
-				info@ofeliaemephoto.com.
+				For inquiries, get in touch at info@ofeliaemephoto.com.
 			</p>
 			<p>
 				<a href="https://www.instagram.com/ofeliaemephoto" target="_blank" rel="noopener noreferrer"
@@ -35,6 +34,7 @@
 			</p>
 		</div>
 	</div>
+	<footer class="about-footer">© 2026 Ofelia Eme Photo. All rights reserved.</footer>
 </div>
 
 <style>
@@ -79,6 +79,13 @@
 
 	.about-text p:last-child {
 		margin-bottom: 0;
+	}
+
+	.about-footer {
+		margin-top: 2rem;
+		font-size: 0.85rem;
+		color: #666;
+		letter-spacing: 0.02em;
 	}
 
 	@media (max-width: 768px) {

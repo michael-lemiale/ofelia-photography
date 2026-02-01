@@ -38,7 +38,7 @@ describe('Site Configuration', () => {
 	});
 
 	it('should format title correctly with template', () => {
-		const testTitle = 'Portfolio';
+		const testTitle = 'Selected Work';
 		const formatted = site.titleTemplate.replace('%s', testTitle);
 		expect(formatted).toBe(`${testTitle} | ofelia eme`);
 	});

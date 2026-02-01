@@ -3,7 +3,7 @@ import { site } from '$lib/siteConfig';
 
 export const load: PageLoad = async () => {
 	return {
-		title: 'Portfolio | Ofelia Eme',
+		title: 'Selected Work | Ofelia Eme',
 		description:
 			'A curated selection of photography — fashion, interior, travel and lifestyle — shot on film and digital in Paris and worldwide.',
 		ogImage: site.defaultOgImage

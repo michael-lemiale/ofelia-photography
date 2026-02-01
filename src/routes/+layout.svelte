@@ -316,6 +316,7 @@
 		display: flex;
 		align-items: flex-end; /* ensure image bottom aligns with viewport bottom */
 		justify-content: flex-start; /* avoid internal horizontal gaps */
+		margin: 2px;
 	}
 
 	.carousel-image :global(img) {

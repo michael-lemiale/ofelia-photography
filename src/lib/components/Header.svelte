@@ -35,8 +35,8 @@
 				{#if isMenuOpen}
 					<div class="menu-dropdown">
 						<a href="/" class:active={isActive('/')} onclick={closeMenu}>Home</a>
-						<a href="/portfolio" class:active={isActive('/portfolio')} onclick={closeMenu}
-							>Portfolio</a
+						<a href="/work" class:active={isActive('/work')} onclick={closeMenu}
+							>Selected Work</a
 						>
 						<a href="/about" class:active={isActive('/about')} onclick={closeMenu}>About</a>
 					</div>
@@ -46,7 +46,7 @@
 			<h1 class="logo"><a href="/">OFELIA EME</a></h1>
 
 			<nav class="desktop-nav">
-				<a href="/portfolio" class:active={isActive('/portfolio')}>PORTFOLIO</a>
+				<a href="/work" class:active={isActive('/work')}>WORK</a>
 				<a href="/about" class:active={isActive('/about')}>ABOUT</a>
 			</nav>
 		</div>

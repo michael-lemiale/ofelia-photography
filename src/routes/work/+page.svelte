@@ -117,7 +117,7 @@
 			class="loading-background"
 			role="status"
 			aria-busy="true"
-			aria-label="Loading portfolio images"
+			aria-label="Loading selected work images"
 			transition:fade={{ duration: 1200 }}
 		>
 			<div class="spinner"></div>

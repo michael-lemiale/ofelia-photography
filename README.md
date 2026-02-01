@@ -62,7 +62,7 @@ bun preview
 ## Features
 
 - Dynamic image carousel on home page
-- Portfolio gallery with responsive layout
+- Selected work gallery with responsive layout
 - About page
 - Responsive design for mobile and desktop
 
