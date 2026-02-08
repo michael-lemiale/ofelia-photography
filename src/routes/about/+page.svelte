@@ -2,30 +2,10 @@
 	<div class="about-content">
 		<div class="about-text">
 			<p>
-				Hello! I’m Ofelia, a Paris based photographer specializing in fashion, lifestyle, portrait, and
-				editorial photography. I work with brands, creatives, and individuals to create images that
-				feel natural, intentional, and expressive. I'm based in Paris, France, and available for
-				projects worldwide.
+				Hello! I’m Ofelia, a Mexican American photographer based in Paris. I work with brands, creatives, and individuals to create images that feel natural, expressive, and intentional. My work is deeply influenced by a mix of cultures, textures, and everyday rituals. I’m especially inspired by subtle gestures, simplicity, and the beauty of the in between — the moments that often say the most. I'm based in Paris, France and available for projects worldwide.
 			</p>
 			<p>
-				My approach to photography is rooted in observation and ease. I’m drawn to honest moments,
-				thoughtful details, and images that feel lived in rather than overly posed. Whether I’m
-				photographing people, spaces, or products, my goal is always the same — to create work that
-				feels timeless, refined, and grounded.
-			</p>
-			<p>
-				I primarily work with natural light, blending a relaxed sensibility with clean and
-				considered composition. I aim to make shoots feel collaborative and unforced — creating
-				space for comfort, movement, and authenticity.
-			</p>
-			<p>
-				My background in writing and visual storytelling deeply informs the way I photograph. As a
-				Mexican American now based in Paris, my work is deeply influenced by a mix of cultures,
-				textures, and everyday rituals. I’m especially inspired by subtle gestures, simplicity,
-				and the beauty of the in between — the moments that often say the most.
-			</p>
-			<p>
-				For inquiries, get in touch at info@ofeliaemephoto.com.
+				My approach to photography is rooted in observation and ease. I’m drawn to honest moments, thoughtful details, and images that feel lived in rather than staged. Whether I’m photographing people, spaces, or products, my goal is always the same — to create work that feels timeless, refined, and grounded. I aim to make shoots feel collaborative and unforced — creating space for comfort, movement, and authenticity.
 			</p>
 			<p>
 				<a href="https://www.instagram.com/ofeliaemephoto" target="_blank" rel="noopener noreferrer"
@@ -34,7 +14,7 @@
 			</p>
 		</div>
 	</div>
-	<footer class="about-footer">© 2026 Ofelia Eme Photo. All rights reserved.</footer>
+	<footer class="about-footer">© 2026 Ofelia Eme Photo. All Rights Reserved.</footer>
 </div>
 
 <style>
