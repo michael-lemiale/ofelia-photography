@@ -8,6 +8,9 @@
 				My approach to photography is rooted in observation and ease. I’m drawn to honest moments, thoughtful details, and images that feel lived in rather than staged. Whether I’m photographing people, spaces, or products, my goal is always the same — to create work that feels timeless, refined, and grounded. I aim to make shoots feel collaborative and unforced — creating space for comfort, movement, and authenticity.
 			</p>
 			<p>
+				For inquiries, get in touch at info@ofeliaemephoto.com.
+			</p>
+			<p>
 				<a href="https://www.instagram.com/ofeliaemephoto" target="_blank" rel="noopener noreferrer"
 					>@ofeliaemephoto</a
 				>
