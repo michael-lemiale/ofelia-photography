@@ -8,6 +8,7 @@
 	import { writable } from 'svelte/store';
 	import { site } from '$lib/siteConfig';
 	import { jsonLdOrganization, jsonLdWebSite } from '$lib/seo';
+	import ImageGuard from '$lib/components/ImageGuard.svelte';
 
 	let { data, children } = $props();
 
@@ -197,14 +198,7 @@
 				<div class="carousel-track">
 					{#each duplicatedUrls as url, i}
 						<div class="carousel-image" style={`height: calc(var(--vh) * ${heightsVh[i]});`}>
-							<!-- Transparent overlay to intercept right-click/long-press/drag -->
-							<div
-								class="image-guard"
-								aria-hidden="true"
-								oncontextmenu={(e) => e.preventDefault()}
-								onpointerdown={(e) => e.preventDefault()}
-								ondragstart={(e) => e.preventDefault()}
-							></div>
+						<ImageGuard />
 							<img src={url} alt="Photography by Ofelia Eme" />
 						</div>
 					{/each}
@@ -331,13 +325,6 @@
 		-webkit-touch-callout: none; /* iOS long-press menu */
 	}
 
-	/* Overlay guard prevents context menu and long-press save */
-	.image-guard {
-		position: absolute;
-		inset: 0;
-		z-index: 2;
-		background: transparent;
-	}
 
 	/* Keep a reasonable cap for large screens only */
 	@media (min-width: 1024px) {

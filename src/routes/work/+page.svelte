@@ -1,211 +1,180 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import { writable, get } from 'svelte/store';
-	import { portfolioCache, type PortfolioItem } from '$lib/stores/portfolio';
+	import { loadCategoryImages, type WorkCategory } from '$lib/imageLoader';
+	import { portfolioCaches, type PortfolioItem } from '$lib/stores/portfolio';
+	import { get } from 'svelte/store';
+	import ImageGuard from '$lib/components/ImageGuard.svelte';
 
-	let imageElements = $state<PortfolioItem[]>([]);
-	const gridReady = writable(false);
+	const categories: { slug: WorkCategory; label: string }[] = [
+		{ slug: 'fashion', label: 'Fashion' },
+		{ slug: 'portraits', label: 'Portraits' },
+		{ slug: 'spaces', label: 'Spaces' },
+		{ slug: 'events', label: 'Events' }
+	];
 
-	// Fisher-Yates shuffle algorithm
-	function shuffleArray<T>(array: T[]): T[] {
-		const shuffled = [...array];
-		for (let i = shuffled.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	type CategoryState = {
+		ready: boolean;
+		thumbnail: PortfolioItem | null;
+	};
+
+	let categoryStates = $state<Record<WorkCategory, CategoryState>>({
+		fashion: { ready: false, thumbnail: null },
+		portraits: { ready: false, thumbnail: null },
+		spaces: { ready: false, thumbnail: null },
+		events: { ready: false, thumbnail: null }
+	});
+
+	async function loadCategory(slug: WorkCategory) {
+		// Check if already cached
+		const cached = get(portfolioCaches[slug]);
+		if (cached.ready && cached.elements.length > 0) {
+			const rand = Math.floor(Math.random() * cached.elements.length);
+			categoryStates[slug] = { ready: true, thumbnail: cached.elements[rand] };
+			return;
 		}
-		return shuffled;
-	}
 
-	// Initialize from cache synchronously to avoid first-render spinner
-	{
-		const cached = get(portfolioCache);
-		if (cached.ready) {
-			imageElements = cached.elements;
-			gridReady.set(true);
+		try {
+			const items = await loadCategoryImages(slug);
+			portfolioCaches[slug].set({ elements: items, ready: true });
+			if (items.length > 0) {
+				const rand = Math.floor(Math.random() * items.length);
+				categoryStates[slug] = { ready: true, thumbnail: items[rand] };
+			} else {
+				categoryStates[slug] = { ready: true, thumbnail: null };
+			}
+		} catch (error) {
+			console.error(`Failed to load ${slug} images:`, error);
+			categoryStates[slug] = { ready: true, thumbnail: null };
 		}
 	}
 
 	onMount(() => {
-		const unsubscribe = portfolioCache.subscribe((cache) => {
-			if (cache.ready && imageElements.length === 0) {
-				imageElements = cache.elements;
-				gridReady.set(true);
-			}
-		});
-
-		// If cache not ready, load from API
-		let currentCache: { elements: PortfolioItem[]; ready: boolean } | undefined;
-		const unsubOnce = portfolioCache.subscribe((c) => (currentCache = c));
-		unsubOnce();
-		if (currentCache && currentCache.ready) {
-			// already handled via subscription
-			return () => unsubscribe();
-		}
-
-		// Fetch images from R2 via API
-		fetch('/api/images')
-			.then((res) => res.json())
-			.then((data) => {
-				if (data.error) {
-					console.error('Failed to load images:', data.error);
-					return;
-				}
-
-				// Load images to determine orientation
-				const loads = data.images.map(
-					(image: { url: string; key: string; filename: string }) =>
-						new Promise<PortfolioItem>((resolve) => {
-							const img = new Image();
-							img.onload = () =>
-								resolve({
-									url: image.url,
-									key: image.key,
-									filename: image.filename,
-									isPortrait: img.height > img.width
-								});
-							img.onerror = () =>
-								resolve({
-									url: image.url,
-									key: image.key,
-									filename: image.filename,
-									isPortrait: false
-								});
-							img.src = image.url;
-						})
-				);
-
-				Promise.all(loads).then((results) => {
-					// Shuffle the results for randomized display
-					const shuffled = shuffleArray(results);
-					imageElements = shuffled;
-					gridReady.set(true);
-					portfolioCache.set({ elements: shuffled, ready: true });
-				});
-			})
-			.catch((error) => {
-				console.error('Failed to fetch images:', error);
-			});
-
-		return () => unsubscribe();
+		categories.forEach((c) => loadCategory(c.slug));
 	});
 </script>
 
-<div class="gallery">
-	{#if $gridReady}
-		<div class="gallery-grid" transition:fade={{ duration: 1200 }}>
-			{#each imageElements as item (item.key)}
-				<div
-					class="gallery-item"
-					class:portrait={item.isPortrait}
-					class:landscape={!item.isPortrait}
-				>
-					<!-- Transparent overlay to intercept right-click/long-press/drag -->
+<div class="work-overview">
+	<div class="categories">
+		{#each categories as { slug, label } (slug)}
+			<div class="category-card">
+				{#if categoryStates[slug].ready}
+					<a href="/work/{slug}" class="category-link" transition:fade={{ duration: 800 }}>
+						{#if categoryStates[slug].thumbnail}
+							<div class="image-wrapper">
+							<ImageGuard />
+								<img
+									src={categoryStates[slug].thumbnail?.url}
+									alt="{label} photography by Ofelia"
+									draggable="false"
+									loading="lazy"
+								/>
+								<span class="category-label">{label}</span>
+							</div>
+						{:else}
+							<div class="placeholder">
+								<span class="category-label">{label}</span>
+							</div>
+						{/if}
+					</a>
+				{:else}
 					<div
-						class="image-guard"
-						aria-hidden="true"
-						oncontextmenu={(e) => e.preventDefault()}
-						onpointerdown={(e) => e.preventDefault()}
-						ondragstart={(e) => e.preventDefault()}
-					></div>
-					<img src={item.url} alt="Photography by Ofelia" draggable="false" loading="lazy" />
-				</div>
-			{/each}
-		</div>
-	{:else}
-		<div
-			class="loading-background"
-			role="status"
-			aria-busy="true"
-			aria-label="Loading selected work images"
-			transition:fade={{ duration: 1200 }}
-		>
-			<div class="spinner"></div>
-		</div>
-	{/if}
+						class="loading-card"
+						role="status"
+						aria-busy="true"
+						aria-label="Loading {label}"
+						transition:fade={{ duration: 800 }}
+					>
+						<div class="spinner"></div>
+					</div>
+				{/if}
+			</div>
+		{/each}
+	</div>
 </div>
 
 <style>
-	.gallery {
+	.work-overview {
 		max-width: 1400px;
 		margin: 0 auto;
 		padding: 3rem 2rem;
 	}
 
-	.gallery-grid {
+	.categories {
 		display: grid;
 		grid-template-columns: repeat(2, 1fr);
 		gap: 2rem;
-		grid-auto-flow: dense;
 	}
 
-	.gallery-item {
+	.category-card {
+		position: relative;
+		min-height: 300px;
+	}
+
+	.category-link {
+		display: block;
+		text-decoration: none;
+		color: inherit;
+		position: relative;
+	}
+
+	.image-wrapper {
 		position: relative;
 		overflow: hidden;
+		aspect-ratio: 3 / 4;
 		background: #f5f5f5;
 	}
 
-	/* Overlay guard prevents context menu and long-press save */
-	.image-guard {
-		position: absolute;
-		inset: 0;
-		z-index: 2;
-		background: transparent;
-	}
-
-	.gallery-item.portrait {
-		grid-column: span 1;
-		aspect-ratio: 3 / 4;
-	}
-
-	.gallery-item.landscape {
-		grid-column: span 2;
-		aspect-ratio: 16 / 9;
-	}
-
-	.gallery-item img {
+	.image-wrapper img {
 		width: 100%;
 		height: 100%;
 		object-fit: cover;
-		transition: transform 0.3s ease;
-		pointer-events: none; /* prevent click/context on the img itself */
+		transition: transform 0.4s ease;
+		pointer-events: none;
 		-webkit-user-drag: none;
 		user-select: none;
-		-webkit-touch-callout: none; /* iOS long-press menu */
+		-webkit-touch-callout: none;
 	}
 
-	.gallery-item:hover img {
+	.category-link:hover .image-wrapper img {
 		transform: scale(1.05);
 	}
 
-	@media (max-width: 768px) {
-		.gallery {
-			padding: 2rem 1rem;
-		}
-
-		.gallery-grid {
-			grid-template-columns: 1fr;
-			gap: 1.5rem;
-		}
-
-		.gallery-item.landscape {
-			grid-column: span 1;
-		}
+	.placeholder {
+		position: relative;
+		aspect-ratio: 3 / 4;
+		background: #f5f5f5;
 	}
 
-	/* Loading state */
-	.loading-background {
+	.category-label {
+		position: absolute;
+		inset: 0;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 4rem 0;
+		font-size: 1.5rem;
+		font-weight: 500;
+		letter-spacing: 0.15em;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.75);
+		text-transform: uppercase;
+		color: #fff;
+		z-index: 3;
+		pointer-events: none;
+	}
+
+	.loading-card {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		aspect-ratio: 3 / 4;
+		background: #f5f5f5;
 	}
 
 	.spinner {
-		width: 48px;
-		height: 48px;
+		width: 36px;
+		height: 36px;
 		border-radius: 50%;
-		border: 4px solid rgba(0, 0, 0, 0.15);
+		border: 3px solid rgba(0, 0, 0, 0.15);
 		border-top-color: rgba(0, 0, 0, 0.5);
 		animation: spin 1s linear infinite;
 	}
@@ -216,6 +185,17 @@
 		}
 		to {
 			transform: rotate(360deg);
+		}
+	}
+
+	@media (max-width: 768px) {
+		.work-overview {
+			padding: 2rem 1rem;
+		}
+
+		.categories {
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
 		}
 	}
 </style>
