@@ -1,11 +1,17 @@
 import { defineConfig } from 'vitest/config';
+import { playwright } from '@vitest/browser-playwright';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
-		globals: true,
-		environment: 'jsdom',
-		include: ['src/**/*.{test,spec}.ts', 'src/__tests__/**/*.{test,spec}.ts'],
+		expect: { requireAssertions: true },
+		browser: {
+			enabled: true,
+			provider: playwright(),
+			instances: [{ browser: 'chromium', headless: true }]
+		},
+		include: ['src/**/*.{test,spec}.{js,ts}'],
+		exclude: ['src/lib/server/**']
 	},
 });
