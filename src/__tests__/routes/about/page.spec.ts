@@ -7,7 +7,6 @@ describe('About Page (+page.svelte)', () => {
 	});
 
 	it('should export as a page component', () => {
-		const componentStr = AboutPage.toString();
-		expect(componentStr).toMatch(/svelte/i);
+		expect(typeof AboutPage).toBe('function');
 	});
 });

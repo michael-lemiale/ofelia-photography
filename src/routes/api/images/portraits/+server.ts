@@ -1,4 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
+import { listAllImages } from '$lib/server/r2';
 
 export const GET: RequestHandler = async ({ platform }) => {
 	try {
@@ -15,24 +16,14 @@ export const GET: RequestHandler = async ({ platform }) => {
 			);
 		}
 
-		const list = await bucket.list({ prefix: 'portfolio/portraits/' });
+		const objects = await listAllImages(bucket, 'portfolio/portraits/');
+		const images = objects.map((obj) => ({
+			key: obj.key,
+			url: `${publicUrl}/${obj.key}`,
+			filename: obj.key.split('/').pop() || obj.key
+		}));
 
-		const images = (list.objects || [])
-			.filter((obj: { key: string }) => /\.(jpg|jpeg|png|webp|avif)$/i.test(obj.key))
-			.map((obj: { key: string }) => ({
-				key: obj.key,
-				url: `${publicUrl}/${obj.key}`,
-				filename: obj.key.split('/').pop() || obj.key
-			}));
-
-		return json({
-			images,
-			debug: {
-				listedCount: (list.objects || []).length,
-				filteredCount: images.length,
-				prefix: 'portfolio/portraits/'
-			}
-		});
+		return json({ images });
 	} catch (error) {
 		console.error('Failed to fetch portraits images from R2:', error);
 		return json({ error: 'Failed to load images' }, { status: 500 });

@@ -6,7 +6,6 @@
 	class="image-guard"
 	aria-hidden="true"
 	oncontextmenu={(e) => e.preventDefault()}
-	onpointerdown={(e) => e.preventDefault()}
 	ondragstart={(e) => e.preventDefault()}
 ></div>
 

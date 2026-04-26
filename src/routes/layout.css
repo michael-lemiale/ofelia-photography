@@ -32,19 +32,19 @@ body {
 }
 
 /* Ensure form controls and headings inherit Nunito Sans globally */
-:global(button),
-:global(input),
-:global(textarea),
-:global(select) {
+button,
+input,
+textarea,
+select {
 	font-family: var(--font-sans);
 }
 
-:global(h1),
-:global(h2),
-:global(h3),
-:global(h4),
-:global(h5),
-:global(h6) {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
 	font-family: var(--font-sans);
-	font-weight: 600; /* maintain heading emphasis */
+	font-weight: 600;
 }
