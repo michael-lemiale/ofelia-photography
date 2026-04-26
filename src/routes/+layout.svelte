@@ -25,6 +25,12 @@
 	const carouselReady = writable(false);
 	setContext('carouselReady', carouselReady);
 
+	/**
+	 * How many images to eagerly preload before revealing the carousel.
+	 * Covers roughly 2 viewports worth at typical aspect ratios.
+	 */
+	const EAGER_COUNT = 12;
+
 	// Ensure --vh reflects the visual viewport height on mobile
 	function setVhVar() {
 		if (typeof window === 'undefined') return;
@@ -53,6 +59,16 @@
 		};
 	});
 
+	function loadImage(src: string): Promise<void> {
+		return new Promise<void>((resolve) => {
+			const img = new Image();
+			img.decoding = 'async' as any;
+			img.onload = () => resolve();
+			img.onerror = () => resolve();
+			img.src = src;
+		});
+	}
+
 	// Fisher-Yates shuffle algorithm
 	function shuffleArray<T>(array: T[]): T[] {
 		const shuffled = [...array];
@@ -64,7 +80,6 @@
 	}
 
 	onMount(async () => {
-		// Fetch images from API (now includes thumbUrl + dimensions)
 		try {
 			const response = await fetch('/api/images');
 			const data = await response.json();
@@ -86,9 +101,18 @@
 			images = [];
 		}
 
-		// Show the carousel immediately — width/height attributes reserve layout space
-		// so images render without stutter as they progressively load.
-		// The carousel scrolls over 600s so off-screen images load long before they're visible.
+		if (images.length === 0) {
+			isCarouselReady = true;
+			carouselReady.set(true);
+			return;
+		}
+
+		// Eagerly preload only the first batch — enough to fill the visible viewport.
+		// The rest use loading="lazy" and the browser fetches them as the CSS
+		// animation scrolls them toward the viewport.
+		const eagerUrls = images.slice(0, EAGER_COUNT).map((img) => img.thumbUrl);
+		await Promise.all(eagerUrls.map((u) => loadImage(u)));
+
 		isCarouselReady = true;
 		carouselReady.set(true);
 	});
@@ -193,13 +217,18 @@
 			<div class="carousel-background" transition:fade={{ duration: 800 }}>
 				<div class="carousel-track">
 					{#each duplicatedImages as img, i}
-						<div class="carousel-image" style={`height: calc(var(--vh) * ${heightsVh[i]});`}>
+						{@const idx = i % rotatedImages.length}
+						<div
+							class="carousel-image"
+							style={`height: calc(var(--vh) * ${heightsVh[i]}); aspect-ratio: ${img.width} / ${img.height};`}
+						>
 							<ImageGuard />
 							<img
 								src={img.thumbUrl}
 								alt="Photography by Ofelia Eme"
 								width={img.width || undefined}
 								height={img.height || undefined}
+								loading={idx < EAGER_COUNT ? 'eager' : 'lazy'}
 								decoding="async"
 							/>
 						</div>
@@ -306,14 +335,13 @@
 	.carousel-image {
 		position: relative;
 		flex-shrink: 0;
-		height: auto;
 		max-height: 100%;
-		width: auto;
 		display: flex;
 		align-items: flex-end; /* ensure image bottom aligns with viewport bottom */
 		justify-content: flex-start; /* avoid internal horizontal gaps */
 		margin: 2px;
-		background: #e8e8e8; /* placeholder while image loads */
+		/* Blend with page background so unloaded slots are invisible, not grey boxes */
+		background: transparent;
 	}
 
 	.carousel-image :global(img) {
@@ -326,6 +354,13 @@
 		-webkit-user-drag: none;
 		user-select: none;
 		-webkit-touch-callout: none; /* iOS long-press menu */
+		/* Smooth fade-in as each image loads */
+		animation: fadeIn 0.6s ease both;
+	}
+
+	@keyframes fadeIn {
+		from { opacity: 0; }
+		to { opacity: 1; }
 	}
 
 
