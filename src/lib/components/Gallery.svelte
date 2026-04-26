@@ -62,7 +62,15 @@
 					class:landscape={!item.isPortrait}
 				>
 					<ImageGuard />
-					<img src={item.url} alt="Photography by Ofelia" draggable="false" loading="lazy" />
+					<img
+						src={item.url}
+						alt="Photography by Ofelia"
+						draggable="false"
+						loading="lazy"
+						decoding="async"
+						width={item.isPortrait ? 600 : 960}
+						height={item.isPortrait ? 800 : 540}
+					/>
 				</div>
 			{/each}
 		</div>
