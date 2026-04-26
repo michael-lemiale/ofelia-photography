@@ -89,9 +89,8 @@
 			imageUrls = [];
 		}
 
-		// Preload only the first visible batch before showing the carousel
 		if (imageUrls.length > 0) {
-			await preloadImages(imageUrls.slice(0, 8));
+			await preloadImages(imageUrls);
 		}
 		
 		isCarouselReady = true;
