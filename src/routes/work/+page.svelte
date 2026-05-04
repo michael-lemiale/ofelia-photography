@@ -65,7 +65,7 @@
 							<ImageGuard />
 								<img
 									src={categoryStates[slug].thumbnail?.url}
-									alt="{label} photography by Ofelia"
+									alt=""
 									draggable="false"
 									loading="lazy"
 								/>
@@ -84,9 +84,7 @@
 						aria-busy="true"
 						aria-label="Loading {label}"
 						transition:fade={{ duration: 800 }}
-					>
-						<div class="spinner"></div>
-					</div>
+					></div>
 				{/if}
 			</div>
 		{/each}
@@ -122,7 +120,7 @@
 		position: relative;
 		overflow: hidden;
 		aspect-ratio: 3 / 4;
-		background: #f5f5f5;
+		background: linear-gradient(160deg, #d6d6d6, #f0f0f0);
 	}
 
 	.image-wrapper img {
@@ -143,7 +141,7 @@
 	.placeholder {
 		position: relative;
 		aspect-ratio: 3 / 4;
-		background: #f5f5f5;
+		background: linear-gradient(160deg, #d6d6d6, #f0f0f0);
 	}
 
 	.category-label {
@@ -163,29 +161,8 @@
 	}
 
 	.loading-card {
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		aspect-ratio: 3 / 4;
-		background: #f5f5f5;
-	}
-
-	.spinner {
-		width: 36px;
-		height: 36px;
-		border-radius: 50%;
-		border: 3px solid rgba(0, 0, 0, 0.15);
-		border-top-color: rgba(0, 0, 0, 0.5);
-		animation: spin 1s linear infinite;
-	}
-
-	@keyframes spin {
-		from {
-			transform: rotate(0deg);
-		}
-		to {
-			transform: rotate(360deg);
-		}
+		background: linear-gradient(160deg, #d6d6d6, #f0f0f0);
 	}
 
 	@media (max-width: 768px) {

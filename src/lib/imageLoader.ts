@@ -41,7 +41,8 @@ export async function loadCategoryImages(category: WorkCategory): Promise<Portfo
 		if (image.width && image.height) {
 			// Use server-provided orientation — no download needed
 			items.push({
-				url: image.thumbUrl || image.url,
+				url: image.url,
+				thumbUrl: image.thumbUrl || image.url,
 				key: image.key,
 				filename: image.filename,
 				isPortrait: image.isPortrait ?? image.height > image.width
@@ -50,7 +51,8 @@ export async function loadCategoryImages(category: WorkCategory): Promise<Portfo
 			// Fallback: will need client-side detection
 			const idx = items.length;
 			items.push({
-				url: image.thumbUrl || image.url,
+				url: image.url,
+				thumbUrl: image.thumbUrl || image.url,
 				key: image.key,
 				filename: image.filename,
 				isPortrait: false // placeholder

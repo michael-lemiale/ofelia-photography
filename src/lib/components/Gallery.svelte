@@ -64,7 +64,7 @@
 					<ImageGuard />
 					<img
 						src={item.url}
-						alt="Photography by Ofelia"
+						alt=""
 						draggable="false"
 						loading="lazy"
 						decoding="async"
@@ -104,7 +104,7 @@
 	.gallery-item {
 		position: relative;
 		overflow: hidden;
-		background: #f5f5f5;
+		background: linear-gradient(160deg, #d6d6d6, #f0f0f0);
 	}
 
 

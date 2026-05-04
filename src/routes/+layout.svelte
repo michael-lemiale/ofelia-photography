@@ -9,6 +9,8 @@
 	import { site } from '$lib/siteConfig';
 	import { jsonLdOrganization, jsonLdWebSite } from '$lib/seo';
 	import ImageGuard from '$lib/components/ImageGuard.svelte';
+	import { portfolioCaches, type PortfolioItem } from '$lib/stores/portfolio';
+	import { shuffleArray, type WorkCategory } from '$lib/imageLoader';
 
 	let { data, children } = $props();
 
@@ -69,16 +71,6 @@
 		});
 	}
 
-	// Fisher-Yates shuffle algorithm
-	function shuffleArray<T>(array: T[]): T[] {
-		const shuffled = [...array];
-		for (let i = shuffled.length - 1; i > 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-		}
-		return shuffled;
-	}
-
 	onMount(async () => {
 		try {
 			const response = await fetch('/api/images');
@@ -92,6 +84,29 @@
 						height: img.height || 0
 					}))
 				);
+
+				// Pre-populate per-category caches with full-res URLs so gallery
+				// pages are instant and show originals without a separate API fetch.
+				const validCategories = new Set<WorkCategory>(['fashion', 'portraits', 'spaces', 'events']);
+				const categoryMap: Partial<Record<WorkCategory, PortfolioItem[]>> = {};
+				for (const img of data.images as any[]) {
+					const parts = (img.key as string).split('/');
+					if (parts.length >= 3) {
+						const cat = parts[1] as WorkCategory;
+						if (validCategories.has(cat)) {
+							(categoryMap[cat] ??= []).push({
+								url: img.url,
+								thumbUrl: img.thumbUrl || img.url,
+								key: img.key,
+								filename: img.filename,
+								isPortrait: img.isPortrait ?? img.height > img.width
+							});
+						}
+					}
+				}
+				for (const [cat, items] of Object.entries(categoryMap) as [WorkCategory, PortfolioItem[]][]) {
+					portfolioCaches[cat].set({ elements: shuffleArray(items), ready: true });
+				}
 			} else {
 				console.error('No images found from R2');
 				images = [];
@@ -225,7 +240,7 @@
 							<ImageGuard />
 							<img
 								src={img.thumbUrl}
-								alt="Photography by Ofelia Eme"
+								alt=""
 								width={img.width || undefined}
 								height={img.height || undefined}
 								loading={idx < EAGER_COUNT ? 'eager' : 'lazy'}

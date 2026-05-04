@@ -1,9 +1,10 @@
 import { writable } from 'svelte/store';
 import type { WorkCategory } from '$lib/imageLoader';
 
-export type PortfolioItem = { 
-	url: string; 
-	key: string; 
+export type PortfolioItem = {
+	url: string;
+	thumbUrl: string;
+	key: string;
 	isPortrait: boolean;
 	filename: string;
 };
