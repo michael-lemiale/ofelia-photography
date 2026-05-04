@@ -41,6 +41,7 @@ bun run build
 bun x wrangler dev .svelte-kit/cloudflare/_worker.js --env production
 ```
 
+
 Notes:
 - This uses the R2 binding defined in wrangler.toml and the production bucket.
 - If you want a preview bucket instead, set up `preview_bucket_name` and run without `--env production`.
