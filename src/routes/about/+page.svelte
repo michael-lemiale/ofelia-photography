@@ -10,7 +10,7 @@
 			</p>
 			<p>
 				<a href="https://www.instagram.com/ofeliaemephoto" target="_blank" rel="noopener noreferrer"
-					>@ofeliaemephoto</a
+					>@ofeliaeme</a
 				>
 			</p>
 		</div>
