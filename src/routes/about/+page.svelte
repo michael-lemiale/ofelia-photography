@@ -15,7 +15,7 @@
 			</p>
 		</div>
 	</div>
-	<footer class="about-footer">© 2026 Ofelia Eme Photo. All Rights Reserved.</footer>
+	<footer class="about-footer">© 2026 Ofelia Eme. All Rights Reserved.</footer>
 </div>
 
 <style>
