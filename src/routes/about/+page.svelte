@@ -9,7 +9,7 @@
 				For inquiries, get in touch at info@ofeliaemephoto.com.
 			</p>
 			<p>
-				<a href="https://www.instagram.com/ofeliaemephoto" target="_blank" rel="noopener noreferrer"
+				<a href="https://www.instagram.com/ofeliaeme" target="_blank" rel="noopener noreferrer"
 					>@ofeliaeme</a
 				>
 			</p>
