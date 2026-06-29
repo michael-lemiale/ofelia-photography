@@ -6,7 +6,7 @@
 			<p>
 				I aim to make shoots feel collaborative and unforced — creating space for ease, movement, and real moments. Whether I'm photographing people, spaces, or products, the goal is always the same: work that feels timeless, grounded, and distinctly lived. My approach is rooted in observation. I'm drawn to reflections and obstructions — those layered moments that reveal the most.			</p>
 			<p>
-				For inquiries, get in touch at info@ofeliaemephoto.com.
+				For inquiries, get in touch at info@ofeliaeme.com.
 			</p>
 			<p>
 				<a href="https://www.instagram.com/ofeliaeme" target="_blank" rel="noopener noreferrer"
