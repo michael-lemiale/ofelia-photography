@@ -60,6 +60,12 @@ Preview the production build:
 bun preview
 ```
 
+## Deploy locally
+```sh
+wrangler deploy
+```
+
+```
 ## Features
 
 - Dynamic image carousel on home page
