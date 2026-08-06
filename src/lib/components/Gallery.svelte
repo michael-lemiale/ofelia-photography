@@ -62,8 +62,11 @@
 					class:landscape={!item.isPortrait}
 				>
 					<ImageGuard />
+					<!-- Thumbs, not item.url: the originals are ~1411x2048 and WebKit
+					     decodes at natural size, so a full category of them exhausted
+					     the renderer's memory budget on mobile. -->
 					<img
-						src={item.url}
+						src={item.thumbUrl}
 						alt=""
 						draggable="false"
 						loading="lazy"
