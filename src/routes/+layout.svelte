@@ -42,6 +42,9 @@
 	 */
 	const CAROUSEL_COUNT = 20;
 
+	// Feeds the animation duration; the pace itself is set in CSS, which is where
+	// the viewport-width breakpoints live. See --seconds-per-image.
+
 	function loadImage(src: string): Promise<void> {
 		return new Promise<void>((resolve) => {
 			const img = new Image();
@@ -211,7 +214,7 @@
 	{#if isRootPage}
 		{#if isCarouselReady}
 			<div class="carousel-background" transition:fade={{ duration: 800 }}>
-				<div class="carousel-track">
+				<div class="carousel-track" style={`--image-count: ${images.length};`}>
 					{#each duplicatedImages as img, i}
 						{@const idx = i % rotatedImages.length}
 						<div
@@ -313,9 +316,25 @@
 		height: 100dvh; /* dynamic viewport height */
 		height: calc(var(--vh) * 100); /* resolves to svh/dvh where supported, see :root below */
 		width: max-content;
-		animation: scroll 600s linear infinite;
+		animation: scroll calc(var(--image-count, 20) * var(--seconds-per-image) * 1s) linear
+			infinite;
 		align-items: flex-end;
 		will-change: transform;
+	}
+
+	/*
+	 * Pace of the scroll, in seconds of travel per image in the pool. Lower is
+	 * faster.
+	 *
+	 * One value covers every device on purpose. The track covers half its own
+	 * width per cycle, and that width is driven by viewport HEIGHT alone —
+	 * items are sized in vh — which barely varies between a phone (~745px) and
+	 * a laptop (~902px). So a single duration already yields near-identical
+	 * pixel-per-second motion everywhere, which is what the eye actually reads
+	 * as speed. Scaling this by viewport width instead makes desktop race.
+	 */
+	.carousel-track {
+		--seconds-per-image: 13;
 	}
 
 	@keyframes scroll {
