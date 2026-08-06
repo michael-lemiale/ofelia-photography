@@ -33,33 +33,14 @@
 	 */
 	const EAGER_COUNT = 12;
 
-	// Ensure --vh reflects the visual viewport height on mobile
-	function setVhVar() {
-		if (typeof window === 'undefined') return;
-		const vv = (window as any).visualViewport;
-		const height = vv && typeof vv.height === 'number' ? vv.height : window.innerHeight;
-		const vh = height * 0.01;
-		document.documentElement.style.setProperty('--vh', `${vh}px`);
-	}
-	onMount(() => {
-		setVhVar();
-		const onWinResize = () => setVhVar();
-		window.addEventListener('resize', onWinResize, { passive: true });
-		const vv = (window as any).visualViewport;
-		const onVvResize = () => setVhVar();
-		const onVvScroll = () => setVhVar();
-		if (vv) {
-			vv.addEventListener('resize', onVvResize, { passive: true });
-			vv.addEventListener('scroll', onVvScroll, { passive: true });
-		}
-		return () => {
-			window.removeEventListener('resize', onWinResize as any);
-			if (vv) {
-				vv.removeEventListener('resize', onVvResize as any);
-				vv.removeEventListener('scroll', onVvScroll as any);
-			}
-		};
-	});
+	/**
+	 * Size of the carousel pool, sampled at random from the full portfolio.
+	 * Every image is rendered twice for the seamless loop and each one's decoded
+	 * bitmap stays resident while the track animates, so the whole pool is
+	 * charged against the renderer's memory budget at once. The full ~99-image
+	 * set overran it and mobile Safari killed the page.
+	 */
+	const CAROUSEL_COUNT = 20;
 
 	function loadImage(src: string): Promise<void> {
 		return new Promise<void>((resolve) => {
@@ -76,17 +57,17 @@
 			const response = await fetch('/api/images');
 			const data = await response.json();
 			if (data.images && data.images.length > 0) {
-				images = shuffleArray(
+				images = shuffleArray<CarouselImage>(
 					data.images.map((img: any) => ({
 						url: img.url,
 						thumbUrl: img.thumbUrl || img.url,
 						width: img.width || 0,
 						height: img.height || 0
 					}))
-				);
+				).slice(0, CAROUSEL_COUNT);
 
-				// Pre-populate per-category caches with full-res URLs so gallery
-				// pages are instant and show originals without a separate API fetch.
+				// Pre-populate per-category caches so gallery pages render instantly
+				// without a second API round-trip.
 				const validCategories = new Set<WorkCategory>(['fashion', 'portraits', 'spaces', 'events']);
 				const categoryMap: Partial<Record<WorkCategory, PortfolioItem[]>> = {};
 				for (const img of data.images as any[]) {
@@ -300,7 +281,7 @@
 		height: 100vh; /* fallback */
 		height: 100svh; /* small viewport height */
 		height: 100dvh; /* dynamic viewport height */
-		height: calc(var(--vh) * 100); /* JS-set visual viewport height */
+		height: calc(var(--vh) * 100); /* resolves to svh/dvh where supported, see :root below */
 		z-index: 0;
 		overflow: hidden;
 		background: #f5f5f5;
@@ -314,7 +295,7 @@
 		height: 100vh; /* fallback */
 		height: 100svh; /* small viewport height */
 		height: 100dvh; /* dynamic viewport height */
-		height: calc(var(--vh) * 100); /* JS-set visual viewport height */
+		height: calc(var(--vh) * 100); /* resolves to svh/dvh where supported, see :root below */
 		z-index: 0;
 		display: flex;
 		align-items: center;
@@ -330,7 +311,7 @@
 		height: 100vh; /* fallback */
 		height: 100svh; /* small viewport height to avoid mobile UI gaps */
 		height: 100dvh; /* dynamic viewport height */
-		height: calc(var(--vh) * 100); /* JS-set visual viewport height */
+		height: calc(var(--vh) * 100); /* resolves to svh/dvh where supported, see :root below */
 		width: max-content;
 		animation: scroll 600s linear infinite;
 		align-items: flex-end;

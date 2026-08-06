@@ -64,7 +64,7 @@
 							<div class="image-wrapper">
 							<ImageGuard />
 								<img
-									src={categoryStates[slug].thumbnail?.url}
+									src={categoryStates[slug].thumbnail?.thumbUrl}
 									alt=""
 									draggable="false"
 									loading="lazy"
