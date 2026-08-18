@@ -62,9 +62,12 @@
 					<a href="/work/{slug}" class="category-link" transition:fade={{ duration: 800 }}>
 						{#if categoryStates[slug].thumbnail}
 							<div class="image-wrapper">
-							<ImageGuard />
+								<ImageGuard />
+								<!-- Only four tiles on this page, each up to ~650px wide,
+								     so the 800px thumb is visibly soft. Full-size originals
+								     are affordable at this count. -->
 								<img
-									src={categoryStates[slug].thumbnail?.thumbUrl}
+									src={categoryStates[slug].thumbnail?.url}
 									alt=""
 									draggable="false"
 									loading="lazy"
