@@ -62,18 +62,23 @@
 					class:landscape={!item.isPortrait}
 				>
 					<ImageGuard />
-					<!-- Thumbs, not item.url: the originals are ~1411x2048 and WebKit
+					<!-- Thumbs are 800px wide, too soft for a tile that renders up to
+					     1340px on desktop. The originals are ~1358x2048 and WebKit
 					     decodes at natural size, so a full category of them exhausted
-					     the renderer's memory budget on mobile. -->
-					<img
-						src={item.thumbUrl}
-						alt=""
-						draggable="false"
-						loading="lazy"
-						decoding="async"
-						width={item.isPortrait ? 600 : 960}
-						height={item.isPortrait ? 800 : 540}
-					/>
+					     the renderer's memory budget on mobile. Serve the original only
+					     above the single-column breakpoint, where memory allows it. -->
+					<picture>
+						<source media="(min-width: 769px)" srcset={item.url} />
+						<img
+							src={item.thumbUrl}
+							alt=""
+							draggable="false"
+							loading="lazy"
+							decoding="async"
+							width={item.isPortrait ? 600 : 960}
+							height={item.isPortrait ? 800 : 540}
+						/>
+					</picture>
 				</div>
 			{/each}
 		</div>
@@ -110,7 +115,6 @@
 		background: linear-gradient(160deg, #d6d6d6, #f0f0f0);
 	}
 
-
 	.gallery-item.portrait {
 		grid-column: span 1;
 		aspect-ratio: 3 / 4;
@@ -119,6 +123,12 @@
 	.gallery-item.landscape {
 		grid-column: span 2;
 		aspect-ratio: 16 / 9;
+	}
+
+	/* Keep the <img> the direct layout child so its percentage sizing still
+	   resolves against .gallery-item. */
+	.gallery-item picture {
+		display: contents;
 	}
 
 	.gallery-item img {
