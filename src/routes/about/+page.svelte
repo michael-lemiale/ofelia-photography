@@ -2,12 +2,20 @@
 	<div class="about-content">
 		<div class="about-text">
 			<p>
-				Hello! I'm Ofelia, a Mexican American photographer based in Paris. I work with brands, creatives, and individuals to create images that feel natural, expressive, and intentional. My work is deeply influenced by a mix of cultures, textures, and everyday rituals. I'm especially inspired by simplicity and the beauty of the in-between — the moments that often say the most.			</p>
-			<p>
-				I aim to make shoots feel collaborative and unforced — creating space for ease, movement, and real moments. Whether I'm photographing people, spaces, or products, the goal is always the same: work that feels timeless, grounded, and distinctly lived. My approach is rooted in observation. I'm drawn to reflections and obstructions — those layered moments that reveal the most.			</p>
-			<p>
-				For inquiries, get in touch at info@ofeliaeme.com.
+				Hello! I'm Ofelia, a Mexican American photographer based in Paris. I work with brands,
+				creatives, and individuals to create images that feel natural, expressive, and intentional.
+				My work is deeply influenced by a mix of cultures, textures, and everyday rituals. I'm
+				especially inspired by simplicity and the beauty of the in-between — the moments that often
+				say the most.
 			</p>
+			<p>
+				I aim to make shoots feel collaborative and unforced — creating space for ease, movement,
+				and real moments. Whether I'm photographing people, spaces, or products, the goal is always
+				the same: work that feels timeless, grounded, and distinctly lived. My approach is rooted in
+				observation. I'm drawn to reflections and obstructions — those layered moments that reveal
+				the most.
+			</p>
+			<p>For inquiries, get in touch at info@ofeliaeme.com.</p>
 			<p>
 				<a href="https://www.instagram.com/ofeliaeme" target="_blank" rel="noopener noreferrer"
 					>@ofeliaeme</a

@@ -44,9 +44,9 @@ let manifestCache: ManifestEntry[] | null = null;
 let manifestCacheTime = 0;
 const MANIFEST_TTL = 5 * 60 * 1000; // 5 minutes
 
-export async function getManifest(
-	bucket: { get: (key: string) => Promise<{ text: () => Promise<string> } | null> }
-): Promise<ManifestEntry[]> {
+export async function getManifest(bucket: {
+	get: (key: string) => Promise<{ text: () => Promise<string> } | null>;
+}): Promise<ManifestEntry[]> {
 	const now = Date.now();
 	if (manifestCache && now - manifestCacheTime < MANIFEST_TTL) {
 		return manifestCache;

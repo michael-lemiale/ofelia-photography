@@ -35,9 +35,7 @@
 				{#if isMenuOpen}
 					<div class="menu-dropdown">
 						<a href="/" class:active={isActive('/')} onclick={closeMenu}>Home</a>
-						<a href="/work" class:active={isActive('/work')} onclick={closeMenu}
-							>Selected Work</a
-						>
+						<a href="/work" class:active={isActive('/work')} onclick={closeMenu}>Selected Work</a>
 						<a href="/about" class:active={isActive('/about')} onclick={closeMenu}>About</a>
 					</div>
 				{/if}

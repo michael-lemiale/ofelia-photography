@@ -10,7 +10,7 @@ A modern photography portfolio website built with SvelteKit.
 It is recommended to use [nvm](https://github.com/nvm-sh/nvm) to manage your Node.js versions. You can switch to the correct version by running:
 
 ```sh
-nvm use 
+nvm use
 ```
 
 ## Setup
@@ -41,8 +41,8 @@ bun run build
 bun x wrangler dev .svelte-kit/cloudflare/_worker.js --env production
 ```
 
-
 Notes:
+
 - This uses the R2 binding defined in wrangler.toml and the production bucket.
 - If you want a preview bucket instead, set up `preview_bucket_name` and run without `--env production`.
 
@@ -61,6 +61,7 @@ bun preview
 ```
 
 ## Deploy locally
+
 ```sh
 wrangler deploy
 ```
@@ -77,3 +78,4 @@ wrangler deploy
 
 - `/src/routes` - Page components and routing
 - `/src/lib/components` - Reusable components
+```

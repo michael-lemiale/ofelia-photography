@@ -2,14 +2,14 @@
 
 /**
  * Upload images from a local directory to Cloudflare R2
- * 
+ *
  * Usage:
  *   bun scripts/upload-images.ts <source-directory> [options]
- * 
+ *
  * Options:
  *   --prefix <prefix>    Prefix for uploaded files (e.g., 'portfolio/')
  *   --dry-run           Show what would be uploaded without uploading
- * 
+ *
  * Example:
  *   bun scripts/upload-images.ts ./local-images --prefix portfolio/
  */
