@@ -5,6 +5,7 @@ This guide will help you set up Cloudflare R2 for hosting your photography portf
 ## What is Cloudflare R2?
 
 Cloudflare R2 is S3-compatible object storage with:
+
 - **No egress fees** (unlike AWS S3)
 - Free tier: 10GB storage, 1 million Class A operations/month
 - Built-in CDN delivery for fast global access
@@ -63,33 +64,39 @@ For 120 high-quality images (~3MB each = 360MB total), you'll stay well within t
 ## Step 5: Prepare Images
 
 ### 1. Resize for Web
+
 Photography images don't need to be full resolution:
+
 ```bash
 # Resize to max 2000px width
 for f in *.jpg; do magick "$f" -resize 2000x\> "$f"; done
 ```
 
 ### 2. Use WebP or AVIF Format
+
 Convert images before uploading for better compression:
+
 ```bash
 # Using ImageMagick
 for f in *.jpg; do magick "$f" -quality 85 "${f%.jpg}.webp"; done
 ```
 
 ### 3. Remove old .jpg images
+
 ```bash
 for f in *.jpg; do rm "$f"; done
 ```
 
-
 ## Step 6: Configure Environment Variables
 
 1. Copy `.env.example` to `.env`:
+
    ```bash
    cp .env.example .env
    ```
 
 2. Edit `.env` and add your R2 credentials:
+
    ```env
    R2_ACCOUNT_ID=your_account_id_here
    R2_ACCESS_KEY_ID=your_access_key_from_step_4
@@ -105,6 +112,7 @@ for f in *.jpg; do rm "$f"; done
 ### Prepare Your Images
 
 Organize your images in a local folder, for example:
+
 ```
 /Users/michael/Photos/portfolio/
   ├── photo-001.jpg
@@ -115,6 +123,7 @@ Organize your images in a local folder, for example:
 ### Upload Using the Script
 
 1. **Dry run** (preview what will be uploaded):
+
    ```bash
    bun scripts/upload-images.ts ~/Downloads/ofelia-photos-2026 --prefix portfolio/ --dry-run
    ```
@@ -125,6 +134,7 @@ Organize your images in a local folder, for example:
    ```
 
 The script will:
+
 - Recursively scan for image files (jpg, jpeg, png, webp, avif)
 - Upload them to R2 with the `portfolio/` prefix
 - Show progress for each file
@@ -133,6 +143,7 @@ The script will:
 ## Step 7: Test Your Setup
 
 1. Start your development server:
+
    ```bash
    bun run dev
    ```

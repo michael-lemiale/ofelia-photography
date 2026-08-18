@@ -34,7 +34,7 @@
 	const EAGER_COUNT = 12;
 
 	/**
-	 * Size of the carousel pool, sampled at random from the full portfolio.
+	 * Size of the carousel pool, sampled at random from the fashion set.
 	 * Every image is rendered twice for the seamless loop and each one's decoded
 	 * bitmap stays resident while the track animates, so the whole pool is
 	 * charged against the renderer's memory budget at once. The full ~99-image
@@ -61,12 +61,14 @@
 			const data = await response.json();
 			if (data.images && data.images.length > 0) {
 				images = shuffleArray<CarouselImage>(
-					data.images.map((img: any) => ({
-						url: img.url,
-						thumbUrl: img.thumbUrl || img.url,
-						width: img.width || 0,
-						height: img.height || 0
-					}))
+					(data.images as any[])
+						.filter((img: any) => img.key?.startsWith('portfolio/fashion/'))
+						.map((img: any) => ({
+							url: img.url,
+							thumbUrl: img.thumbUrl || img.url,
+							width: img.width || 0,
+							height: img.height || 0
+						}))
 				).slice(0, CAROUSEL_COUNT);
 
 				// Pre-populate per-category caches so gallery pages render instantly
@@ -88,7 +90,10 @@
 						}
 					}
 				}
-				for (const [cat, items] of Object.entries(categoryMap) as [WorkCategory, PortfolioItem[]][]) {
+				for (const [cat, items] of Object.entries(categoryMap) as [
+					WorkCategory,
+					PortfolioItem[]
+				][]) {
 					portfolioCaches[cat].set({ elements: shuffleArray(items), ready: true });
 				}
 			} else {
@@ -118,10 +123,7 @@
 
 	// Start at a random position
 	let randomStart = $derived(Math.floor(Math.random() * images.length));
-	let rotatedImages = $derived([
-		...images.slice(randomStart),
-		...images.slice(0, randomStart)
-	]);
+	let rotatedImages = $derived([...images.slice(randomStart), ...images.slice(0, randomStart)]);
 
 	// Duplicate images for seamless loop (2x is sufficient for -50% translate)
 	let duplicatedImages = $derived([...rotatedImages, ...rotatedImages]);
@@ -316,8 +318,7 @@
 		height: 100dvh; /* dynamic viewport height */
 		height: calc(var(--vh) * 100); /* resolves to svh/dvh where supported, see :root below */
 		width: max-content;
-		animation: scroll calc(var(--image-count, 20) * var(--seconds-per-image) * 1s) linear
-			infinite;
+		animation: scroll calc(var(--image-count, 20) * var(--seconds-per-image) * 1s) linear infinite;
 		align-items: flex-end;
 		will-change: transform;
 	}
@@ -374,10 +375,13 @@
 	}
 
 	@keyframes fadeIn {
-		from { opacity: 0; }
-		to { opacity: 1; }
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
 	}
-
 
 	/* Keep a reasonable cap for large screens only */
 	@media (min-width: 1024px) {
