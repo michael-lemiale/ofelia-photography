@@ -10,21 +10,17 @@
 	let isMenuOpen = $state(false);
 	let dialogEl: HTMLDialogElement;
 
+	// A native <dialog> opened with showModal() puts the header in the top
+	// layer's background and makes it inert, so the MENU button underneath
+	// can't be reused as a toggle — a separate CLOSE button lives inside the
+	// dialog instead. showModal() still closes on Escape on its own.
 	function openMenu() {
 		dialogEl.showModal();
 		isMenuOpen = true;
 	}
 
-	// A native <dialog> opened with showModal() closes on Escape and makes
-	// the rest of the document inert on its own, so neither needs wiring
-	// up by hand here.
 	function closeMenu() {
 		dialogEl.close();
-	}
-
-	function toggleMenu() {
-		if (isMenuOpen) closeMenu();
-		else openMenu();
 	}
 
 	function isActive(path: string) {
@@ -32,11 +28,23 @@
 	}
 
 	$effect(() => {
-		if (typeof document === 'undefined') return;
+		// Older WebKit doesn't reliably stop background scroll under a modal
+		// dialog on its own.
 		document.body.style.overflow = isMenuOpen ? 'hidden' : '';
 		return () => {
 			document.body.style.overflow = '';
 		};
+	});
+
+	$effect(() => {
+		// jsdom (component tests) has no matchMedia implementation.
+		if (typeof window.matchMedia !== 'function') return;
+		const wide = window.matchMedia('(min-width: 641px)');
+		const onChange = (e: MediaQueryListEvent) => {
+			if (e.matches && isMenuOpen) closeMenu();
+		};
+		wide.addEventListener('change', onChange);
+		return () => wide.removeEventListener('change', onChange);
 	});
 </script>
 
@@ -44,11 +52,11 @@
 	<div class="bar">
 		<button
 			class="menu-toggle"
-			onclick={toggleMenu}
+			onclick={openMenu}
 			aria-expanded={isMenuOpen}
 			aria-controls="mobile-menu"
 		>
-			{isMenuOpen ? 'CLOSE' : 'MENU'}
+			MENU
 		</button>
 
 		<h1 class="wordmark"><a href="/">OFELIA EME</a></h1>
@@ -62,6 +70,7 @@
 </header>
 
 <dialog id="mobile-menu" class="overlay" bind:this={dialogEl} onclose={() => (isMenuOpen = false)}>
+	<button class="menu-toggle close-toggle" onclick={closeMenu}>CLOSE</button>
 	<nav class="overlay-nav">
 		{#each links as { href, label } (href)}
 			<a {href} class:active={isActive(href)} onclick={closeMenu}>{label}</a>
@@ -123,10 +132,9 @@
 		border-bottom-color: var(--color-ink);
 	}
 
-	.menu-toggle {
+	.menu-toggle,
+	.close-toggle {
 		display: none;
-		grid-column: 1;
-		justify-self: start;
 		background: none;
 		border: none;
 		padding: 0;
@@ -135,6 +143,19 @@
 		font-size: 0.75rem;
 		letter-spacing: 0.12em;
 		color: var(--color-ink);
+	}
+
+	.menu-toggle {
+		grid-column: 1;
+		justify-self: start;
+	}
+
+	/* Positioned to land where the header's MENU button sits, since the
+	   dialog's own containing block is the viewport, not the header grid. */
+	.close-toggle {
+		position: fixed;
+		top: 1rem;
+		left: 1rem;
 	}
 
 	.overlay {
@@ -147,10 +168,6 @@
 		max-width: none;
 		max-height: none;
 		background: var(--color-bg);
-	}
-
-	.overlay::backdrop {
-		background: transparent;
 	}
 
 	.overlay[open] {
@@ -194,7 +211,8 @@
 			display: none;
 		}
 
-		.menu-toggle {
+		.menu-toggle,
+		.close-toggle {
 			display: block;
 		}
 	}
