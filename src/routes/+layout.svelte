@@ -5,41 +5,48 @@
 	import Footer from '$lib/components/Footer.svelte';
 	import { site } from '$lib/siteConfig';
 	import { jsonLdOrganization, jsonLdWebSite } from '$lib/seo';
+	import { page } from '$app/state';
 
-	let { data, children } = $props();
+	let { children } = $props();
+
+	// `page.data` is the merged data of every load function in the route
+	// hierarchy (this layout's own `+layout.ts` plus the active page's
+	// load), unlike the `data` prop, which would only carry this layout's
+	// own data and never a page's title/description/noindex overrides.
+	let head = $derived(page.data);
 </script>
 
 <svelte:head>
-	<title>{data?.title ?? site.defaultTitle}</title>
-	<meta name="description" content={data?.description ?? site.defaultDescription} />
-	<meta name="robots" content={data?.noindex ? 'noindex, nofollow' : 'index, follow'} />
+	<title>{head?.title ?? site.defaultTitle}</title>
+	<meta name="description" content={head?.description ?? site.defaultDescription} />
+	<meta name="robots" content={head?.noindex ? 'noindex, nofollow' : 'index, follow'} />
 	<link rel="icon" href={favicon} />
-	{#if data?.canonical}
-		<link rel="canonical" href={data.canonical} />
+	{#if head?.canonical}
+		<link rel="canonical" href={head.canonical} />
 	{/if}
 
 	<!-- Open Graph -->
 	<meta property="og:type" content="website" />
 	<meta property="og:site_name" content={site.name} />
-	<meta property="og:title" content={data?.title ?? site.defaultTitle} />
-	<meta property="og:description" content={data?.description ?? site.defaultDescription} />
-	<meta property="og:url" content={data?.canonical ?? site.url} />
+	<meta property="og:title" content={head?.title ?? site.defaultTitle} />
+	<meta property="og:description" content={head?.description ?? site.defaultDescription} />
+	<meta property="og:url" content={head?.canonical ?? site.url} />
 	<meta
 		property="og:image"
-		content={data?.ogImage?.startsWith('http')
-			? data.ogImage
-			: site.url + (data?.ogImage ?? site.defaultOgImage)}
+		content={head?.ogImage?.startsWith('http')
+			? head.ogImage
+			: site.url + (head?.ogImage ?? site.defaultOgImage)}
 	/>
 
 	<!-- Twitter -->
 	<meta name="twitter:card" content="summary_large_image" />
-	<meta name="twitter:title" content={data?.title ?? site.defaultTitle} />
-	<meta name="twitter:description" content={data?.description ?? site.defaultDescription} />
+	<meta name="twitter:title" content={head?.title ?? site.defaultTitle} />
+	<meta name="twitter:description" content={head?.description ?? site.defaultDescription} />
 	<meta
 		name="twitter:image"
-		content={data?.ogImage?.startsWith('http')
-			? data.ogImage
-			: site.url + (data?.ogImage ?? site.defaultOgImage)}
+		content={head?.ogImage?.startsWith('http')
+			? head.ogImage
+			: site.url + (head?.ogImage ?? site.defaultOgImage)}
 	/>
 
 	<!-- Structured Data -->

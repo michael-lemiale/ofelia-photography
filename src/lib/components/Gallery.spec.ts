@@ -1,6 +1,7 @@
 import { describe, it, expect, afterEach, beforeEach } from 'vitest';
 import { mount, unmount } from 'svelte';
 import Gallery from './Gallery.svelte';
+import gallerySource from './Gallery.svelte?raw';
 import type { GalleryImage } from '$lib/server/gallery';
 
 /**
@@ -56,6 +57,24 @@ describe('Gallery row pairing', () => {
 		expect(rows).toHaveLength(2);
 		expect(rows[0].querySelectorAll('.item')).toHaveLength(2);
 		expect(rows[1].querySelectorAll('.item')).toHaveLength(1);
+	});
+
+	it('caps a lone trailing image to half width instead of stretching it full-row', () => {
+		// Vite extracts component CSS to a file rather than injecting a <style>
+		// tag at runtime, so a mounted DOM can't tell us what the stylesheet
+		// says. Checking the component source is the only way to regression-test
+		// that the override rule stays in place.
+		expect(gallerySource).toContain(':only-child)');
+		expect(gallerySource).toContain('calc(50% - 0.75rem)');
+	});
+});
+
+describe('Gallery empty state', () => {
+	it('shows a placeholder line and no rows when there are no images', () => {
+		component = mount(Gallery, { target: host, props: { images: [] } });
+
+		expect(host.querySelector('.empty')?.textContent).toBe('No images yet.');
+		expect(host.querySelectorAll('.row')).toHaveLength(0);
 	});
 });
 

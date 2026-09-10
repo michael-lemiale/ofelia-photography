@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { site } from '$lib/siteConfig';
 
-	const portraitSrc = site.aboutPortraitKey ? `${site.imageBaseUrl}/${site.aboutPortraitKey}` : '';
+	let { data } = $props();
 </script>
 
-<div class="about" class:no-portrait={!portraitSrc}>
-	{#if portraitSrc}
+<div class="about" class:no-portrait={!data.portraitUrl}>
+	{#if data.portraitUrl}
 		<div class="portrait">
-			<img src={portraitSrc} alt="Ofelia Eme" loading="lazy" />
+			<img src={data.portraitUrl} alt="Ofelia Eme" loading="lazy" />
 		</div>
 	{/if}
 

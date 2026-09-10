@@ -15,7 +15,8 @@ const REDIRECTS: Record<string, string> = {
 };
 
 export const handle: Handle = async ({ event, resolve }) => {
-	const redirectTo = REDIRECTS[event.url.pathname];
+	const pathname = event.url.pathname.replace(/\/$/, '') || '/';
+	const redirectTo = REDIRECTS[pathname];
 	if (redirectTo) {
 		return new Response(null, {
 			status: 301,
@@ -25,7 +26,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const response = await resolve(event);
 
-	if (event.url.pathname === '/work/events') {
+	if (pathname === '/work/events') {
 		response.headers.set('X-Robots-Tag', 'noindex, nofollow');
 	}
 

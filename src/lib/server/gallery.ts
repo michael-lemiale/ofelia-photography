@@ -42,6 +42,10 @@ export async function loadGallery(
 	const manifest = await getManifest(bucket);
 	const entries = filterManifestByPrefix(manifest, `portfolio/${category}/`);
 
+	if (entries.length === 0) {
+		console.warn(`No manifest entries for portfolio/${category}/`);
+	}
+
 	const images = entries.map((entry) => ({
 		url: `${publicUrl}/${entry.key}`,
 		thumbUrl: `${publicUrl}/${entry.thumbKey}`,

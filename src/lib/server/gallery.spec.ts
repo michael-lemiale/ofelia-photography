@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { loadGallery } from './gallery';
 
 const MANIFEST = [
@@ -45,9 +45,13 @@ describe('loadGallery', () => {
 		});
 	});
 
-	it('returns an empty list when nothing matches the category', async () => {
+	it('returns an empty list and warns when nothing matches the category', async () => {
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
 		const images = await loadGallery(platformWithManifest(), 'events');
+
 		expect(images).toHaveLength(0);
+		expect(warn).toHaveBeenCalledWith(expect.stringContaining('portfolio/events/'));
+		warn.mockRestore();
 	});
 
 	it('throws a 500 when the R2 bucket binding is missing', async () => {

@@ -10,7 +10,7 @@
 		<span class="sep">&middot;</span>
 		<a href={`mailto:${site.contactEmail}`}>{site.contactEmail.toUpperCase()}</a>
 		<span class="sep">&middot;</span>
-		<span>&copy; 2026 OFELIA EME &mdash; ALL RIGHTS RESERVED</span>
+		<span>&copy; {new Date().getFullYear()} OFELIA EME &mdash; ALL RIGHTS RESERVED</span>
 	</div>
 </footer>
 
@@ -25,8 +25,8 @@
 		margin: 0 auto;
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 0.5rem 1rem;
+		justify-content: flex-start;
+		gap: 0.5rem;
 		font-family: var(--font-mono);
 		font-size: 0.7rem;
 		letter-spacing: 0.08em;

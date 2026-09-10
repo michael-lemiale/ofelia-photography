@@ -8,23 +8,46 @@
 	];
 
 	let isMenuOpen = $state(false);
+	let dialogEl: HTMLDialogElement;
 
-	function toggleMenu() {
-		isMenuOpen = !isMenuOpen;
+	function openMenu() {
+		dialogEl.showModal();
+		isMenuOpen = true;
 	}
 
+	// A native <dialog> opened with showModal() closes on Escape and makes
+	// the rest of the document inert on its own, so neither needs wiring
+	// up by hand here.
 	function closeMenu() {
-		isMenuOpen = false;
+		dialogEl.close();
+	}
+
+	function toggleMenu() {
+		if (isMenuOpen) closeMenu();
+		else openMenu();
 	}
 
 	function isActive(path: string) {
 		return page.url.pathname === path;
 	}
+
+	$effect(() => {
+		if (typeof document === 'undefined') return;
+		document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+		return () => {
+			document.body.style.overflow = '';
+		};
+	});
 </script>
 
 <header>
 	<div class="bar">
-		<button class="menu-toggle" onclick={toggleMenu} aria-expanded={isMenuOpen}>
+		<button
+			class="menu-toggle"
+			onclick={toggleMenu}
+			aria-expanded={isMenuOpen}
+			aria-controls="mobile-menu"
+		>
 			{isMenuOpen ? 'CLOSE' : 'MENU'}
 		</button>
 
@@ -38,15 +61,13 @@
 	</div>
 </header>
 
-{#if isMenuOpen}
-	<div class="overlay">
-		<nav class="overlay-nav">
-			{#each links as { href, label } (href)}
-				<a {href} class:active={isActive(href)} onclick={closeMenu}>{label}</a>
-			{/each}
-		</nav>
-	</div>
-{/if}
+<dialog id="mobile-menu" class="overlay" bind:this={dialogEl} onclose={() => (isMenuOpen = false)}>
+	<nav class="overlay-nav">
+		{#each links as { href, label } (href)}
+			<a {href} class:active={isActive(href)} onclick={closeMenu}>{label}</a>
+		{/each}
+	</nav>
+</dialog>
 
 <style>
 	header {
@@ -117,7 +138,45 @@
 	}
 
 	.overlay {
-		display: none;
+		margin: 0;
+		padding: 0;
+		border: none;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		max-height: none;
+		background: var(--color-bg);
+	}
+
+	.overlay::backdrop {
+		background: transparent;
+	}
+
+	.overlay[open] {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.overlay-nav {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2rem;
+		font-family: var(--font-mono);
+		font-size: 1.1rem;
+		letter-spacing: 0.15em;
+	}
+
+	.overlay-nav a {
+		color: var(--color-ink);
+		text-decoration: none;
+	}
+
+	.overlay-nav a.active {
+		text-decoration: underline;
+		text-underline-offset: 6px;
 	}
 
 	@media (max-width: 640px) {
@@ -137,36 +196,6 @@
 
 		.menu-toggle {
 			display: block;
-		}
-
-		.overlay {
-			display: flex;
-			position: fixed;
-			inset: 0;
-			z-index: 99;
-			background: var(--color-bg);
-			align-items: center;
-			justify-content: center;
-		}
-
-		.overlay-nav {
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			gap: 2rem;
-			font-family: var(--font-mono);
-			font-size: 1.1rem;
-			letter-spacing: 0.15em;
-		}
-
-		.overlay-nav a {
-			color: var(--color-ink);
-			text-decoration: none;
-		}
-
-		.overlay-nav a.active {
-			text-decoration: underline;
-			text-underline-offset: 6px;
 		}
 	}
 </style>

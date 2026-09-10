@@ -17,4 +17,11 @@ declare global {
 	}
 }
 
+// Vite's `?raw` import suffix, used in tests that need a component's source
+// text (e.g. to regression-test a CSS rule jsdom can't evaluate).
+declare module '*.svelte?raw' {
+	const content: string;
+	export default content;
+}
+
 export {};

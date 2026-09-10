@@ -24,6 +24,9 @@
 </script>
 
 <div class="gallery">
+	{#if images.length === 0}
+		<p class="empty">No images yet.</p>
+	{/if}
 	{#each rows as row (row.map((img) => img.key).join('|'))}
 		<div class="row">
 			{#each row as item (item.key)}
@@ -69,6 +72,14 @@
 		gap: 1.5rem;
 	}
 
+	.empty {
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-ink-secondary);
+	}
+
 	.item {
 		position: relative;
 		overflow: hidden;
@@ -89,6 +100,16 @@
 
 	.item picture {
 		display: contents;
+	}
+
+	/* A lone trailing image (odd count) would otherwise inherit the same
+	   flex-grow as a paired row and stretch to the full row width. Cap it
+	   to half the row instead, so it reads as one tile among many rather
+	   than a banner. !important overrides the inline flex-grow set above. */
+	@media (min-width: 769px) {
+		.row:has(> .item:only-child) > .item {
+			flex: 0 0 calc(50% - 0.75rem) !important;
+		}
 	}
 
 	@media (max-width: 768px) {

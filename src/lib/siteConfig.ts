@@ -11,9 +11,6 @@ export const site = {
 	},
 	contactEmail: 'studio@ofeliaeme.com',
 	defaultOgImage: '/public/default.jpg',
-	// Public R2 host, matching wrangler.toml's R2_PUBLIC_URL — used to build
-	// the About page portrait src without a server load for one static image.
-	imageBaseUrl: 'https://images.ofeliaemephoto.com',
 	clients: [] as string[],
 	published: [] as string[],
 	aboutPortraitKey: ''
