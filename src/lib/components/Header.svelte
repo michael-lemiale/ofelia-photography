@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
+	const links = [
+		{ href: '/', label: 'WORK' },
+		{ href: '/travel', label: 'TRAVEL' },
+		{ href: '/about', label: 'ABOUT' }
+	];
+
 	let isMenuOpen = $state(false);
 
 	function toggleMenu() {
@@ -11,229 +17,156 @@
 		isMenuOpen = false;
 	}
 
-	let isRootPage = $derived(page.url.pathname === '/');
-
 	function isActive(path: string) {
 		return page.url.pathname === path;
 	}
 </script>
 
 <header>
-	{#if isRootPage}
-		<div class="root-only container">
-			<h1 class="logo"><a href="/">OFELIA EME</a></h1>
-		</div>
-	{:else}
-		<div class="container">
-			<div class="menu-wrapper">
-				<button class="menu-toggle" onclick={toggleMenu} aria-label="Toggle menu">
-					<span class="bar"></span>
-					<span class="bar"></span>
-					<span class="bar"></span>
-				</button>
+	<div class="bar">
+		<button class="menu-toggle" onclick={toggleMenu} aria-expanded={isMenuOpen}>
+			{isMenuOpen ? 'CLOSE' : 'MENU'}
+		</button>
 
-				{#if isMenuOpen}
-					<div class="menu-dropdown">
-						<a href="/" class:active={isActive('/')} onclick={closeMenu}>Home</a>
-						<a href="/work" class:active={isActive('/work')} onclick={closeMenu}>Selected Work</a>
-						<a href="/about" class:active={isActive('/about')} onclick={closeMenu}>About</a>
-					</div>
-				{/if}
-			</div>
+		<h1 class="wordmark"><a href="/">OFELIA EME</a></h1>
 
-			<h1 class="logo"><a href="/">OFELIA EME</a></h1>
-
-			<nav class="desktop-nav">
-				<a href="/work" class:active={isActive('/work')}>WORK</a>
-				<a href="/about" class:active={isActive('/about')}>ABOUT</a>
-			</nav>
-		</div>
-	{/if}
+		<nav class="desktop-nav">
+			{#each links as { href, label } (href)}
+				<a {href} class:active={isActive(href)}>{label}</a>
+			{/each}
+		</nav>
+	</div>
 </header>
+
+{#if isMenuOpen}
+	<div class="overlay">
+		<nav class="overlay-nav">
+			{#each links as { href, label } (href)}
+				<a {href} class:active={isActive(href)} onclick={closeMenu}>{label}</a>
+			{/each}
+		</nav>
+	</div>
+{/if}
 
 <style>
 	header {
-		padding: 1rem 0;
-		position: relative;
+		position: sticky;
+		top: 0;
 		z-index: 100;
-		background: transparent;
+		background: var(--color-bg);
+		border-bottom: 1px solid var(--color-hairline);
 	}
 
-	/* Fixed header styling: black text across all pages */
-
-	.container {
-		max-width: 1200px;
+	.bar {
+		max-width: 1400px;
 		margin: 0 auto;
-		padding: 0 2rem;
+		padding: 1.25rem 2rem;
 		display: grid;
 		grid-template-columns: auto 1fr auto;
 		align-items: center;
 		gap: 1rem;
 	}
 
-	/* Root page: center the logo and hide other controls */
-	.container.root-only {
-		grid-template-columns: 1fr;
-		justify-items: center;
-	}
-
-	.container.root-only .logo {
+	.wordmark {
+		grid-column: 2;
 		justify-self: center;
+		font-family: var(--font-serif);
+		font-size: 1.5rem;
+		letter-spacing: 0.35em;
 		text-align: center;
 	}
 
-	.menu-wrapper {
-		position: relative;
-		justify-self: start;
-	}
-
-	.logo {
-		font-size: 2rem;
-		font-weight: 600;
-		color: #111;
+	.wordmark a {
+		color: var(--color-ink);
 		text-decoration: none;
-		letter-spacing: 0.5rem;
-		justify-self: start;
-		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
-	}
-
-	.logo a {
-		color: inherit;
-		text-decoration: none;
-		transition: opacity 0.2s ease;
-	}
-
-	.logo a:hover {
-		opacity: 0.5;
-	}
-
-	.menu-wrapper {
-		position: relative;
-	}
-
-	.menu-toggle {
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 0.5rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		z-index: 101;
-		transition: transform 0.2s ease;
-	}
-
-	.menu-toggle:hover {
-		transform: scale(1.1);
-	}
-
-	.bar {
-		width: 24px;
-		height: 2px;
-		background-color: #111;
-		border-radius: 2px;
-		transition: all 0.3s ease;
-	}
-
-	.menu-dropdown {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		background: #fff;
-		border: 1px solid #e5e5e5;
-		border-radius: 8px;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-		padding: 0.5rem 0;
-		min-width: 160px;
-		z-index: 100;
-		margin-top: 0.5rem;
-	}
-
-	.menu-dropdown a {
-		display: block;
-		padding: 0.75rem 1.5rem;
-		color: #111;
-		text-decoration: none;
-		font-size: 1rem;
-		font-weight: 500;
-		transition: background-color 0.2s ease;
-	}
-
-	.menu-dropdown a:hover {
-		background-color: #f5f5f5;
-	}
-
-	.menu-dropdown a.active {
-		text-decoration: underline;
-		text-underline-offset: 4px;
 	}
 
 	.desktop-nav {
-		display: flex;
-		gap: 2rem;
+		grid-column: 3;
 		justify-self: end;
+		display: flex;
+		gap: 1.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.12em;
 	}
 
 	.desktop-nav a {
-		font-size: 1rem;
-		font-weight: 600;
-		letter-spacing: 0.2em;
-		color: #111;
+		color: var(--color-ink);
 		text-decoration: none;
-		transition: opacity 0.2s ease;
-	}
-
-	.desktop-nav a:hover {
-		opacity: 0.7;
+		padding-bottom: 0.25rem;
+		border-bottom: 1px solid transparent;
 	}
 
 	.desktop-nav a.active {
-		text-decoration: underline;
-		text-underline-offset: 6px;
-		text-decoration-thickness: 2px;
+		border-bottom-color: var(--color-ink);
+	}
+
+	.menu-toggle {
+		display: none;
+		grid-column: 1;
+		justify-self: start;
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.12em;
+		color: var(--color-ink);
+	}
+
+	.overlay {
+		display: none;
 	}
 
 	@media (max-width: 640px) {
-		.container {
-			position: relative;
-			padding: 0 1rem;
-			grid-template-columns: 1fr;
-			justify-items: center;
+		.bar {
+			padding: 1rem;
+			grid-template-columns: auto 1fr auto;
 		}
 
-		/* Mobile: show hamburger fixed left, center logo, hide desktop nav */
-		.menu-wrapper {
+		.wordmark {
+			font-size: 1.1rem;
+			letter-spacing: 0.25em;
+		}
+
+		.desktop-nav {
+			display: none;
+		}
+
+		.menu-toggle {
 			display: block;
-			position: absolute;
-			left: 1rem;
-			top: 50%;
-			transform: translateY(-50%);
 		}
 
-		.logo {
-			font-size: 1.25rem;
-			justify-self: center;
-			text-align: center;
-		}
-
-		.desktop-nav {
-			display: none;
-		}
-	}
-
-	/* Desktop: hide hamburger, show nav right, logo left */
-	@media (min-width: 641px) {
-		.menu-wrapper {
-			display: none;
-		}
-
-		.logo {
-			justify-self: start;
-		}
-
-		.desktop-nav {
+		.overlay {
 			display: flex;
-			justify-self: end;
+			position: fixed;
+			inset: 0;
+			z-index: 99;
+			background: var(--color-bg);
+			align-items: center;
+			justify-content: center;
+		}
+
+		.overlay-nav {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 2rem;
+			font-family: var(--font-mono);
+			font-size: 1.1rem;
+			letter-spacing: 0.15em;
+		}
+
+		.overlay-nav a {
+			color: var(--color-ink);
+			text-decoration: none;
+		}
+
+		.overlay-nav a.active {
+			text-decoration: underline;
+			text-underline-offset: 6px;
 		}
 	}
 </style>

@@ -20,11 +20,9 @@ describe('SEO utilities', () => {
 			expect(schema.url).toBe(site.url);
 		});
 
-		it('should include social media links', () => {
+		it('should include only the instagram link', () => {
 			const schema = jsonLdOrganization();
-			expect(schema.sameAs).toContain(site.social.instagram);
-			expect(schema.sameAs).toContain(site.social.tiktok);
-			expect(schema.sameAs).toContain(site.social.substack);
+			expect(schema.sameAs).toEqual([site.social.instagram]);
 		});
 
 		it('should include contact point with email', () => {
@@ -48,11 +46,9 @@ describe('SEO utilities', () => {
 			expect(schema.url).toBe(site.url);
 		});
 
-		it('should include search action potential', () => {
+		it('should not include a search action (the site has no search)', () => {
 			const schema = jsonLdWebSite();
-			expect(schema.potentialAction).toBeDefined();
-			expect(schema.potentialAction['@type']).toBe('SearchAction');
-			expect(schema.potentialAction.target).toContain(site.url);
+			expect('potentialAction' in schema).toBe(false);
 		});
 	});
 });

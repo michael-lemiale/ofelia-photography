@@ -9,6 +9,7 @@ export const load: LayoutLoad = async ({ url }) => {
 		title: site.defaultTitle,
 		description: site.defaultDescription,
 		ogImage: site.defaultOgImage,
-		canonical
+		canonical,
+		noindex: false
 	};
 };

@@ -6,7 +6,7 @@ export function jsonLdOrganization() {
 		'@type': 'Organization',
 		name: site.name,
 		url: site.url,
-		sameAs: [site.social.instagram, site.social.tiktok, site.social.substack],
+		sameAs: [site.social.instagram],
 		contactPoint: {
 			'@type': 'ContactPoint',
 			email: site.contactEmail,
@@ -20,11 +20,6 @@ export function jsonLdWebSite() {
 		'@context': 'https://schema.org',
 		'@type': 'WebSite',
 		name: site.name,
-		url: site.url,
-		potentialAction: {
-			'@type': 'SearchAction',
-			target: `${site.url}/?q={search_term_string}`,
-			'query-input': 'required name=search_term_string'
-		}
+		url: site.url
 	};
 }

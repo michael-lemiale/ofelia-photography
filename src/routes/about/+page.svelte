@@ -1,6 +1,20 @@
-<div class="about">
-	<div class="about-content">
-		<div class="about-text">
+<script lang="ts">
+	import { site } from '$lib/siteConfig';
+
+	const portraitSrc = site.aboutPortraitKey ? `${site.imageBaseUrl}/${site.aboutPortraitKey}` : '';
+</script>
+
+<div class="about" class:no-portrait={!portraitSrc}>
+	{#if portraitSrc}
+		<div class="portrait">
+			<img src={portraitSrc} alt="Ofelia Eme" loading="lazy" />
+		</div>
+	{/if}
+
+	<div class="content">
+		<h2 class="headline">{site.defaultDescription}</h2>
+
+		<div class="bio">
 			<p>
 				Hello! I'm Ofelia, a Mexican American photographer based in Paris. I work with brands,
 				creatives, and individuals to create images that feel natural, expressive, and intentional.
@@ -15,74 +29,126 @@
 				observation. I'm drawn to reflections and obstructions — those layered moments that reveal
 				the most.
 			</p>
-			<p>For inquiries, get in touch at info@ofeliaeme.com.</p>
-			<p>
-				<a href="https://www.instagram.com/ofeliaeme" target="_blank" rel="noopener noreferrer"
-					>@ofeliaeme</a
+		</div>
+
+		<hr />
+
+		<div class="grid">
+			{#if site.clients.length > 0}
+				<div class="cell">
+					<span class="label">Clients</span>
+					<span class="value">{site.clients.join(', ')}</span>
+				</div>
+			{/if}
+			{#if site.published.length > 0}
+				<div class="cell">
+					<span class="label">Published</span>
+					<span class="value">{site.published.join(', ')}</span>
+				</div>
+			{/if}
+			<div class="cell">
+				<span class="label">Enquiries</span>
+				<span class="value"><a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></span>
+			</div>
+			<div class="cell">
+				<span class="label">Elsewhere</span>
+				<span class="value"
+					><a href={site.social.instagram} target="_blank" rel="noopener noreferrer">Instagram</a
+					></span
 				>
-			</p>
+			</div>
 		</div>
 	</div>
-	<footer class="about-footer">© 2026 Ofelia Eme. All Rights Reserved.</footer>
 </div>
 
 <style>
 	.about {
-		max-width: 800px;
+		max-width: 1200px;
 		margin: 0 auto;
 		padding: 3rem 2rem;
+		display: grid;
+		grid-template-columns: 40% 1fr;
+		gap: 3rem;
+		align-items: start;
 	}
 
-	.about-content {
-		text-align: left;
+	.about.no-portrait {
+		grid-template-columns: 1fr;
 	}
 
-	.about-text {
+	.portrait img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	.headline {
+		font-size: 1.75rem;
+		font-weight: 400;
+		line-height: 1.4;
+		margin-bottom: 2rem;
+	}
+
+	.bio {
 		line-height: 1.8;
-		color: #333;
+		color: var(--color-ink);
 	}
 
-	/* Make links clearly underlined and obvious on hover */
-	.about-text a {
-		color: #000;
-		text-decoration: underline;
-		text-underline-offset: 2px;
-		text-decoration-thickness: 1px;
-		transition:
-			color 0.2s ease,
-			text-underline-offset 0.2s ease,
-			text-decoration-thickness 0.2s ease;
+	.bio p {
+		margin: 0 0 1.5rem;
 	}
 
-	.about-text a:hover,
-	.about-text a:focus-visible {
-		color: #111;
-		text-underline-offset: 3px;
-		text-decoration-thickness: 2px;
-	}
-
-	.about-text p {
-		margin-bottom: 1.5rem;
-		font-size: 1.1rem;
-	}
-
-	.about-text p:last-child {
+	.bio p:last-child {
 		margin-bottom: 0;
 	}
 
-	.about-footer {
-		margin-top: 2rem;
-		font-size: 0.85rem;
-		color: #666;
-		letter-spacing: 0.02em;
+	hr {
+		border: none;
+		border-top: 1px solid var(--color-hairline);
+		margin: 2rem 0;
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.5rem 2rem;
+	}
+
+	.cell {
+		display: flex;
+		flex-direction: column;
+		gap: 0.4rem;
+	}
+
+	.label {
+		font-family: var(--font-mono);
+		font-size: 0.7rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		color: var(--color-ink-secondary);
+	}
+
+	.value {
+		font-size: 0.95rem;
+	}
+
+	.value a {
+		color: var(--color-ink);
 	}
 
 	@media (max-width: 768px) {
 		.about {
+			grid-template-columns: 1fr;
 			padding: 2rem 1rem;
+			gap: 2rem;
 		}
-		.about-text p {
-			font-size: 1rem;
+
+		.headline {
+			font-size: 1.4rem;
+		}
+
+		.grid {
+			grid-template-columns: 1fr 1fr;
 		}
 	}
 </style>

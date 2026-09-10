@@ -66,16 +66,15 @@ bun preview
 wrangler deploy
 ```
 
-```
 ## Features
 
-- Dynamic image carousel on home page
-- Selected work gallery with responsive layout
-- About page
+- Server-rendered justified galleries for Work (`/`), Travel (`/travel`), and the hidden Events page (`/work/events`), each fed from an R2 manifest
+- About page with clients/published/enquiries/elsewhere details
 - Responsive design for mobile and desktop
 
 ## Project Structure
 
 - `/src/routes` - Page components and routing
 - `/src/lib/components` - Reusable components
-```
+- `/src/lib/server` - R2 manifest access and gallery loading
+- `/src/hooks.server.ts` - Legacy route redirects and the Events noindex header

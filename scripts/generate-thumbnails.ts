@@ -94,7 +94,7 @@ async function thumbExists(thumbKey: string): Promise<boolean> {
 }
 
 function getThumbKey(originalKey: string): string {
-	// portfolio/fashion/img.jpg -> portfolio-thumbs/fashion/img.webp
+	// portfolio/work/img.jpg -> portfolio-thumbs/work/img.webp
 	const withoutExt = originalKey.replace(/\.[^.]+$/, '');
 	return withoutExt.replace(/^portfolio\//, 'portfolio-thumbs/') + '.webp';
 }

@@ -1,14 +1,9 @@
-const IMAGE_RE = /\.(jpg|jpeg|png|webp|avif)$/i;
-
-interface R2Object {
-	key: string;
-}
-
-interface R2ListResult {
-	objects?: R2Object[];
-	truncated?: boolean;
-	cursor?: string;
-}
+/**
+ * Reads the R2-hosted portfolio manifest. The manifest is written by
+ * `scripts/generate-thumbnails.ts` and carries thumbnail keys plus
+ * dimensions for every image, so galleries never need to list the
+ * bucket or probe image sizes at request time.
+ */
 
 export interface ManifestEntry {
 	key: string;
@@ -17,26 +12,6 @@ export interface ManifestEntry {
 	height: number;
 	isPortrait: boolean;
 	filename: string;
-}
-
-export async function listAllImages(
-	bucket: { list: (opts: object) => Promise<R2ListResult> },
-	prefix: string
-): Promise<R2Object[]> {
-	const all: R2Object[] = [];
-	let cursor: string | undefined;
-
-	do {
-		const opts: { prefix: string; cursor?: string } = { prefix };
-		if (cursor) opts.cursor = cursor;
-		const page: R2ListResult = await bucket.list(opts);
-		for (const obj of page.objects ?? []) {
-			if (IMAGE_RE.test(obj.key)) all.push(obj);
-		}
-		cursor = page.truncated ? page.cursor : undefined;
-	} while (cursor);
-
-	return all;
 }
 
 /** Cached manifest (per-isolate; fine for workers) */
