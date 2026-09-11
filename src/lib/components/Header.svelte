@@ -50,6 +50,8 @@
 
 <header>
 	<div class="bar">
+		<h1 class="wordmark"><a href="/">OFELIA EME</a></h1>
+
 		<button
 			class="menu-toggle"
 			onclick={openMenu}
@@ -58,8 +60,6 @@
 		>
 			MENU
 		</button>
-
-		<h1 class="wordmark"><a href="/">OFELIA EME</a></h1>
 
 		<nav class="desktop-nav">
 			{#each links as { href, label } (href)}
@@ -91,19 +91,16 @@
 		max-width: 1400px;
 		margin: 0 auto;
 		padding: 1.25rem 2rem;
-		display: grid;
-		grid-template-columns: auto 1fr auto;
+		display: flex;
+		justify-content: space-between;
 		align-items: center;
 		gap: 1rem;
 	}
 
 	.wordmark {
-		grid-column: 2;
-		justify-self: center;
 		font-family: var(--font-serif);
 		font-size: 1.5rem;
 		letter-spacing: 0.35em;
-		text-align: center;
 	}
 
 	.wordmark a {
@@ -112,8 +109,6 @@
 	}
 
 	.desktop-nav {
-		grid-column: 3;
-		justify-self: end;
 		display: flex;
 		gap: 1.5rem;
 		font-family: var(--font-mono);
@@ -145,17 +140,12 @@
 		color: var(--color-ink);
 	}
 
-	.menu-toggle {
-		grid-column: 1;
-		justify-self: start;
-	}
-
 	/* Positioned to land where the header's MENU button sits, since the
-	   dialog's own containing block is the viewport, not the header grid. */
+	   dialog's own containing block is the viewport, not the header's flex row. */
 	.close-toggle {
 		position: fixed;
 		top: 1rem;
-		left: 1rem;
+		right: 1rem;
 	}
 
 	.overlay {
@@ -199,7 +189,6 @@
 	@media (max-width: 640px) {
 		.bar {
 			padding: 1rem;
-			grid-template-columns: auto 1fr auto;
 		}
 
 		.wordmark {
