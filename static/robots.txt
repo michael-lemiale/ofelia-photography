@@ -1,5 +1,7 @@
 User-agent: *
 Allow: /
+# Deliberate belt-and-braces alongside the page's noindex meta and X-Robots-Tag header.
+Disallow: /work/events
 
 # Sitemap location
 Sitemap: https://ofeliaemephoto.com/sitemap.xml

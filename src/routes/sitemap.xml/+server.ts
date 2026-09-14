@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { site } from '$lib/siteConfig';
 
-const routes = ['/', '/work', '/about'];
+const routes = ['/', '/travel', '/about'];
 
 function toISODate(d = new Date()) {
 	return d.toISOString().split('T')[0];

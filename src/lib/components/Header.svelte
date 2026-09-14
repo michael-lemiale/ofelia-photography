@@ -1,239 +1,208 @@
 <script lang="ts">
 	import { page } from '$app/state';
 
-	let isMenuOpen = $state(false);
+	const links = [
+		{ href: '/', label: 'WORK' },
+		{ href: '/travel', label: 'TRAVEL' },
+		{ href: '/about', label: 'ABOUT' }
+	];
 
-	function toggleMenu() {
-		isMenuOpen = !isMenuOpen;
+	let isMenuOpen = $state(false);
+	let dialogEl: HTMLDialogElement;
+
+	// A native <dialog> opened with showModal() puts the header in the top
+	// layer's background and makes it inert, so the MENU button underneath
+	// can't be reused as a toggle — a separate CLOSE button lives inside the
+	// dialog instead. showModal() still closes on Escape on its own.
+	function openMenu() {
+		dialogEl.showModal();
+		isMenuOpen = true;
 	}
 
 	function closeMenu() {
-		isMenuOpen = false;
+		dialogEl.close();
 	}
-
-	let isRootPage = $derived(page.url.pathname === '/');
 
 	function isActive(path: string) {
 		return page.url.pathname === path;
 	}
+
+	$effect(() => {
+		// Older WebKit doesn't reliably stop background scroll under a modal
+		// dialog on its own.
+		document.body.style.overflow = isMenuOpen ? 'hidden' : '';
+		return () => {
+			document.body.style.overflow = '';
+		};
+	});
+
+	$effect(() => {
+		// jsdom (component tests) has no matchMedia implementation.
+		if (typeof window.matchMedia !== 'function') return;
+		const wide = window.matchMedia('(min-width: 641px)');
+		const onChange = (e: MediaQueryListEvent) => {
+			if (e.matches && isMenuOpen) closeMenu();
+		};
+		wide.addEventListener('change', onChange);
+		return () => wide.removeEventListener('change', onChange);
+	});
 </script>
 
 <header>
-	{#if isRootPage}
-		<div class="root-only container">
-			<h1 class="logo"><a href="/">OFELIA EME</a></h1>
-		</div>
-	{:else}
-		<div class="container">
-			<div class="menu-wrapper">
-				<button class="menu-toggle" onclick={toggleMenu} aria-label="Toggle menu">
-					<span class="bar"></span>
-					<span class="bar"></span>
-					<span class="bar"></span>
-				</button>
+	<div class="bar">
+		<h1 class="wordmark"><a href="/">OFELIA EME</a></h1>
 
-				{#if isMenuOpen}
-					<div class="menu-dropdown">
-						<a href="/" class:active={isActive('/')} onclick={closeMenu}>Home</a>
-						<a href="/work" class:active={isActive('/work')} onclick={closeMenu}>Selected Work</a>
-						<a href="/about" class:active={isActive('/about')} onclick={closeMenu}>About</a>
-					</div>
-				{/if}
-			</div>
+		<button
+			class="menu-toggle"
+			onclick={openMenu}
+			aria-expanded={isMenuOpen}
+			aria-controls="mobile-menu"
+		>
+			MENU
+		</button>
 
-			<h1 class="logo"><a href="/">OFELIA EME</a></h1>
-
-			<nav class="desktop-nav">
-				<a href="/work" class:active={isActive('/work')}>WORK</a>
-				<a href="/about" class:active={isActive('/about')}>ABOUT</a>
-			</nav>
-		</div>
-	{/if}
+		<nav class="desktop-nav">
+			{#each links as { href, label } (href)}
+				<a {href} class:active={isActive(href)}>{label}</a>
+			{/each}
+		</nav>
+	</div>
 </header>
+
+<dialog id="mobile-menu" class="overlay" bind:this={dialogEl} onclose={() => (isMenuOpen = false)}>
+	<button class="menu-toggle close-toggle" onclick={closeMenu}>CLOSE</button>
+	<nav class="overlay-nav">
+		{#each links as { href, label } (href)}
+			<a {href} class:active={isActive(href)} onclick={closeMenu}>{label}</a>
+		{/each}
+	</nav>
+</dialog>
 
 <style>
 	header {
-		padding: 1rem 0;
-		position: relative;
+		position: sticky;
+		top: 0;
 		z-index: 100;
-		background: transparent;
+		background: var(--color-bg);
+		border-bottom: 1px solid var(--color-hairline);
 	}
 
-	/* Fixed header styling: black text across all pages */
-
-	.container {
-		max-width: 1200px;
+	.bar {
+		max-width: 1400px;
 		margin: 0 auto;
-		padding: 0 2rem;
-		display: grid;
-		grid-template-columns: auto 1fr auto;
+		padding: 1.25rem 2rem;
+		display: flex;
+		justify-content: space-between;
 		align-items: center;
 		gap: 1rem;
 	}
 
-	/* Root page: center the logo and hide other controls */
-	.container.root-only {
-		grid-template-columns: 1fr;
-		justify-items: center;
+	.wordmark {
+		font-family: var(--font-serif);
+		font-size: 1.5rem;
+		letter-spacing: 0.35em;
 	}
 
-	.container.root-only .logo {
-		justify-self: center;
-		text-align: center;
-	}
-
-	.menu-wrapper {
-		position: relative;
-		justify-self: start;
-	}
-
-	.logo {
-		font-size: 2rem;
-		font-weight: 600;
-		color: #111;
+	.wordmark a {
+		color: var(--color-ink);
 		text-decoration: none;
-		letter-spacing: 0.5rem;
-		justify-self: start;
-		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
-	}
-
-	.logo a {
-		color: inherit;
-		text-decoration: none;
-		transition: opacity 0.2s ease;
-	}
-
-	.logo a:hover {
-		opacity: 0.5;
-	}
-
-	.menu-wrapper {
-		position: relative;
-	}
-
-	.menu-toggle {
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: 0.5rem;
-		display: flex;
-		flex-direction: column;
-		gap: 0.4rem;
-		z-index: 101;
-		transition: transform 0.2s ease;
-	}
-
-	.menu-toggle:hover {
-		transform: scale(1.1);
-	}
-
-	.bar {
-		width: 24px;
-		height: 2px;
-		background-color: #111;
-		border-radius: 2px;
-		transition: all 0.3s ease;
-	}
-
-	.menu-dropdown {
-		position: absolute;
-		top: 100%;
-		left: 0;
-		background: #fff;
-		border: 1px solid #e5e5e5;
-		border-radius: 8px;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-		padding: 0.5rem 0;
-		min-width: 160px;
-		z-index: 100;
-		margin-top: 0.5rem;
-	}
-
-	.menu-dropdown a {
-		display: block;
-		padding: 0.75rem 1.5rem;
-		color: #111;
-		text-decoration: none;
-		font-size: 1rem;
-		font-weight: 500;
-		transition: background-color 0.2s ease;
-	}
-
-	.menu-dropdown a:hover {
-		background-color: #f5f5f5;
-	}
-
-	.menu-dropdown a.active {
-		text-decoration: underline;
-		text-underline-offset: 4px;
 	}
 
 	.desktop-nav {
 		display: flex;
-		gap: 2rem;
-		justify-self: end;
+		gap: 1.5rem;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.12em;
 	}
 
 	.desktop-nav a {
-		font-size: 1rem;
-		font-weight: 600;
-		letter-spacing: 0.2em;
-		color: #111;
+		color: var(--color-ink);
 		text-decoration: none;
-		transition: opacity 0.2s ease;
-	}
-
-	.desktop-nav a:hover {
-		opacity: 0.7;
+		padding-bottom: 0.25rem;
+		border-bottom: 1px solid transparent;
 	}
 
 	.desktop-nav a.active {
+		border-bottom-color: var(--color-ink);
+	}
+
+	.menu-toggle,
+	.close-toggle {
+		display: none;
+		background: none;
+		border: none;
+		padding: 0;
+		cursor: pointer;
+		font-family: var(--font-mono);
+		font-size: 0.75rem;
+		letter-spacing: 0.12em;
+		color: var(--color-ink);
+	}
+
+	/* Positioned to land where the header's MENU button sits, since the
+	   dialog's own containing block is the viewport, not the header's flex row. */
+	.close-toggle {
+		position: fixed;
+		top: 1rem;
+		right: 1rem;
+	}
+
+	.overlay {
+		margin: 0;
+		padding: 0;
+		border: none;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		max-height: none;
+		background: var(--color-bg);
+	}
+
+	.overlay[open] {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.overlay-nav {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 2rem;
+		font-family: var(--font-mono);
+		font-size: 1.1rem;
+		letter-spacing: 0.15em;
+	}
+
+	.overlay-nav a {
+		color: var(--color-ink);
+		text-decoration: none;
+	}
+
+	.overlay-nav a.active {
 		text-decoration: underline;
 		text-underline-offset: 6px;
-		text-decoration-thickness: 2px;
 	}
 
 	@media (max-width: 640px) {
-		.container {
-			position: relative;
-			padding: 0 1rem;
-			grid-template-columns: 1fr;
-			justify-items: center;
+		.bar {
+			padding: 1rem;
 		}
 
-		/* Mobile: show hamburger fixed left, center logo, hide desktop nav */
-		.menu-wrapper {
+		.wordmark {
+			font-size: 1.1rem;
+			letter-spacing: 0.25em;
+		}
+
+		.desktop-nav {
+			display: none;
+		}
+
+		.menu-toggle,
+		.close-toggle {
 			display: block;
-			position: absolute;
-			left: 1rem;
-			top: 50%;
-			transform: translateY(-50%);
-		}
-
-		.logo {
-			font-size: 1.25rem;
-			justify-self: center;
-			text-align: center;
-		}
-
-		.desktop-nav {
-			display: none;
-		}
-	}
-
-	/* Desktop: hide hamburger, show nav right, logo left */
-	@media (min-width: 641px) {
-		.menu-wrapper {
-			display: none;
-		}
-
-		.logo {
-			justify-self: start;
-		}
-
-		.desktop-nav {
-			display: flex;
-			justify-self: end;
 		}
 	}
 </style>

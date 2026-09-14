@@ -9,6 +9,9 @@ export const load: LayoutLoad = async ({ url }) => {
 		title: site.defaultTitle,
 		description: site.defaultDescription,
 		ogImage: site.defaultOgImage,
-		canonical
+		canonical,
+		// Documented default; a page load (e.g. /work/events) overrides this
+		// with `noindex: true` to opt out of indexing.
+		noindex: false
 	};
 };

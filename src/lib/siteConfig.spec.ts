@@ -20,12 +20,10 @@ describe('Site Configuration', () => {
 		expect(site.url).toBe('https://ofeliaemephoto.com');
 	});
 
-	it('should have social media links', () => {
+	it('should have only an instagram social link', () => {
 		expect(site.social.instagram).toBeDefined();
-		expect(site.social.tiktok).toBeDefined();
-		expect(site.social.substack).toBeDefined();
 		expect(site.social.instagram).toMatch(/^https:\/\/www\.instagram\.com\//);
-		expect(site.social.tiktok).toMatch(/^https:\/\/www\.tiktok\.com\//);
+		expect(Object.keys(site.social)).toEqual(['instagram']);
 	});
 
 	it('should have valid contact email', () => {
@@ -35,6 +33,12 @@ describe('Site Configuration', () => {
 	it('should have default OG image', () => {
 		expect(site.defaultOgImage).toBeDefined();
 		expect(site.defaultOgImage).toMatch(/\.(svg|png|jpg|jpeg)$/);
+	});
+
+	it('should start with empty clients/published lists and no portrait key', () => {
+		expect(site.clients).toEqual([]);
+		expect(site.published).toEqual([]);
+		expect(site.aboutPortraitKey).toBe('');
 	});
 
 	it('should format title correctly with template', () => {

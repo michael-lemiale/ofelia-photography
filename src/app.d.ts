@@ -6,7 +6,14 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface PageState {}
-		// interface Platform {}
+		interface Platform {
+			env?: {
+				BUCKET: {
+					get: (key: string) => Promise<{ text: () => Promise<string> } | null>;
+				};
+				R2_PUBLIC_URL?: string;
+			};
+		}
 	}
 }
 
