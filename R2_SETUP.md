@@ -140,7 +140,22 @@ The script will:
 - Show progress for each file
 - Display a summary when complete
 
-## Step 7: Test Your Setup
+### Thumbnails and the manifest
+
+You don't need to run anything after adding or deleting photos. The `workers/manifest-sync` Worker listens for R2 changes under `portfolio/`. It builds WebP thumbnails in `portfolio-thumbs/` and rewrites `portfolio-manifest.json`. Changes reach the site within about 5 minutes: the Worker batches events for 30 seconds, and the site caches the manifest for 5 minutes. A daily cron reruns the sync in case an event was missed. This works the same for script uploads and for changes made in the Cloudflare dashboard.
+
+One-time setup, from `workers/manifest-sync/`:
+
+```bash
+bunx wrangler queues create ofelia-portfolio-sync
+bunx wrangler deploy
+bunx wrangler r2 bucket notification create ofelia-photography-images \
+  --event-type object-create object-delete --queue ofelia-portfolio-sync --prefix portfolio/
+```
+
+Follow sync runs with `bunx wrangler tail ofelia-manifest-sync`.
+
+## Step 8: Test Your Setup
 
 1. Start your development server:
 

@@ -1,6 +1,6 @@
 /**
- * Reads the R2-hosted portfolio manifest. The manifest is written by
- * `scripts/generate-thumbnails.ts` and carries thumbnail keys plus
+ * Reads the R2-hosted portfolio manifest. The manifest is written by the
+ * `workers/manifest-sync` Worker and carries thumbnail keys plus
  * dimensions for every image, so galleries never need to list the
  * bucket or probe image sizes at request time.
  */
@@ -12,6 +12,8 @@ export interface ManifestEntry {
 	height: number;
 	isPortrait: boolean;
 	filename: string;
+	/** The original's etag when its thumbnail was built; a change means it was overwritten. */
+	etag?: string;
 }
 
 /** Cached manifest (per-isolate; fine for workers) */

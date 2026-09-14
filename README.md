@@ -77,4 +77,5 @@ wrangler deploy
 - `/src/routes` - Page components and routing
 - `/src/lib/components` - Reusable components
 - `/src/lib/server` - R2 manifest access and gallery loading
+- `/workers/manifest-sync` - Separate Worker that rebuilds thumbnails and the manifest when R2 changes (see `R2_SETUP.md`)
 - `/src/hooks.server.ts` - Legacy route redirects and the Events noindex header
