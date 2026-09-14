@@ -47,7 +47,7 @@
 				</div>
 			{/if}
 			<div class="cell">
-				<span class="label">Enquiries</span>
+				<span class="label">Inquiries</span>
 				<span class="value"><a href={`mailto:${site.contactEmail}`}>{site.contactEmail}</a></span>
 			</div>
 			<div class="cell">

@@ -4,12 +4,12 @@ export const site = {
 	titleTemplate: '%s | ofelia eme',
 	defaultTitle: 'ofelia eme | film & digital photography | paris',
 	defaultDescription:
-		'Paris-based photographer specializing in fashion and portrait photography — shooting film and digital.',
+		'Paris-based film photographer specializing in fashion and portrait photography.',
 	location: 'Paris, France',
 	social: {
-		instagram: 'https://www.instagram.com/ofeliaemephoto/'
+		instagram: 'https://www.instagram.com/ofeliaeme'
 	},
-	contactEmail: 'studio@ofeliaeme.com',
+	contactEmail: 'info@ofeliaeme.com',
 	defaultOgImage: '/public/default.jpg',
 	clients: [] as string[],
 	published: [] as string[],
