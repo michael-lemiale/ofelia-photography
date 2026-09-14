@@ -1,0 +1,31 @@
+name = "ofelia-manifest-sync"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+# Queue and cron only; there is no HTTP handler to expose.
+workers_dev = false
+
+[observability]
+enabled = true
+
+[[r2_buckets]]
+binding = "BUCKET"
+bucket_name = "ofelia-photography-images"
+
+[images]
+binding = "IMAGES"
+
+[[queues.producers]]
+binding = "SYNC_QUEUE"
+queue = "ofelia-portfolio-sync"
+
+# One consumer at a time so two runs never write the manifest concurrently.
+# The 30s batch window collapses a bulk upload into a handful of runs.
+[[queues.consumers]]
+queue = "ofelia-portfolio-sync"
+max_batch_size = 100
+max_batch_timeout = 30
+max_concurrency = 1
+max_retries = 5
+
+[triggers]
+crons = ["17 4 * * *"]
