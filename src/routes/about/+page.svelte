@@ -12,8 +12,6 @@
 	{/if}
 
 	<div class="content">
-		<h2 class="headline">{site.defaultDescription}</h2>
-
 		<div class="bio">
 			<p>
 				Hello! I'm Ofelia, a Mexican American photographer based in Paris. I work with brands,
@@ -21,13 +19,6 @@
 				My work is deeply influenced by a mix of cultures, textures, and everyday rituals. I'm
 				especially inspired by simplicity and the beauty of the in-between — the moments that often
 				say the most.
-			</p>
-			<p>
-				I aim to make shoots feel collaborative and unforced — creating space for ease, movement,
-				and real moments. Whether I'm photographing people, spaces, or products, the goal is always
-				the same: work that feels timeless, grounded, and distinctly lived. My approach is rooted in
-				observation. I'm drawn to reflections and obstructions — those layered moments that reveal
-				the most.
 			</p>
 		</div>
 
