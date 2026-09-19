@@ -14,11 +14,11 @@
 	<div class="content">
 		<div class="bio">
 			<p>
-				Hello! I'm Ofelia, a Mexican American photographer based in Paris. I work with brands,
-				creatives, and individuals to create images that feel natural, expressive, and intentional.
-				My work is deeply influenced by a mix of cultures, textures, and everyday rituals. I'm
-				especially inspired by simplicity and the beauty of the in-between — the moments that often
-				say the most.
+				Ofelia is a Mexican American photographer based in Paris, working with brands, creatives,
+				and individuals to create images that feel natural, expressive, and intentional. Her work is
+				deeply influenced by a mix of cultures, textures, and everyday rituals. She's especially
+				inspired by simplicity and the beauty of the in-between: the moments that often say the
+				most.
 			</p>
 		</div>
 
